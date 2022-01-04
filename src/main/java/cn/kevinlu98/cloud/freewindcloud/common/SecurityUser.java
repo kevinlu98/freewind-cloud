@@ -1,5 +1,8 @@
 package cn.kevinlu98.cloud.freewindcloud.common;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -11,12 +14,21 @@ import java.util.Collection;
  * Email: lukaiwen@xiaomi.com
  * Description:
  */
+@Getter
 public class SecurityUser extends User {
-    public SecurityUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+
+    private cn.kevinlu98.cloud.freewindcloud.pojo.User loginUser;
+
+
+
+    public SecurityUser(String username, String password, Collection<? extends GrantedAuthority> authorities,cn.kevinlu98.cloud.freewindcloud.pojo.User loginUser) {
         super(username, password, authorities);
+        this.loginUser = loginUser;
     }
 
     public SecurityUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
+
+
 }

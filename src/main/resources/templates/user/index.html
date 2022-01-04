@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+
+<!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
+<head th:replace="common::head"></head>
+
+<body>
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
+<div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
+
+    <div th:replace="common::sidebar"></div>
+    <div th:replace="common::navbar"></div>
+
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">我的信息</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="new-user-info">
+                                <form th:action="@{/user/save}" method="post" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="form-group col-md-12">
+                                                    <label for="username">用户名:</label>
+                                                    <input type="text" class="form-control" disabled id="username" th:value="${loginUser.username}"
+                                                           name="username" placeholder="用户名">
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="nickname">昵称:</label>
+                                                    <input type="text" class="form-control" id="nickname" th:value="${loginUser.nickname}"
+                                                           name="nickname" placeholder="昵称">
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="email">邮箱:</label>
+                                                    <input type="text" class="form-control" id="email" name="email"  th:value="${loginUser.email}"
+                                                           placeholder="邮箱">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card-header d-flex justify-content-between">
+                                                <div class="header-title">
+                                                    <h4 class="card-title">修改头像</h4>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group text-center">
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="crm-profile-img-edit position-relative">
+                                                            <img class="crm-profile-pic rounded-circle avatar-100"
+                                                                 th:src="${loginUser.avatar}" alt="profile-pic">
+                                                            <div class="crm-p-image bg-primary">
+                                                                <i class="las la-pen upload-button"></i>
+                                                                <input class="file-upload" type="file" name="avatar" th:value="${loginUser.avatar}"
+                                                                       accept="image/*">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="img-extension mt-3">
+                                                        <div class="d-inline-block align-items-center">
+                                                            <span>仅</span>
+                                                            <a href="javascript:void(0);">.jpg</a>
+                                                            <a href="javascript:void(0);">.png</a>
+                                                            <a href="javascript:void(0);">.jpeg</a>
+                                                            <span>允许</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <h5 class="mb-3">安全</h5>
+                                    <div class="row">
+                                        <input name="password" type="password"  style="display:none" autocomplete="new-password"/>
+                                        <div class="form-group col-md-12">
+                                            <label for="pass">原始密码:</label>
+                                            <input type="password" class="form-control" value="" name="pass" id="pass" placeholder="原始密码">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="npass">新密码:</label>
+                                            <input type="password" class="form-control" id="npass" name="npass"
+                                                   placeholder="新密码">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="rpass">确认密码:</label>
+                                            <input type="password" class="form-control" id="rpass" name="rpass"
+                                                   placeholder="确认密码">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">确认修改</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common::footer"></div>
+<div th:include="common::script"></div>
+<div th:replace="common::modal"></div>
+</body>
+</html>

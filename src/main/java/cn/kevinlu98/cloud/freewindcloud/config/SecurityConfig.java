@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.nio.charset.StandardCharsets;
 
@@ -27,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .antMatchers("/userLogin").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/static/**").permitAll()
                 .anyRequest().authenticated();
@@ -36,8 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/")
-                .failureUrl("/login");
+                .defaultSuccessUrl("/");
+        http.logout()
+                .deleteCookies("JESSIONID")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
     }
 
     @Override

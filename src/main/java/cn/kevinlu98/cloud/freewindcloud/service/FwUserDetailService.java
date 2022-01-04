@@ -37,6 +37,6 @@ public class FwUserDetailService implements UserDetailsService {
         Role role = Role.find(user.getRole());
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-        return new SecurityUser(username, user.getPassword(), authorities);
+        return new SecurityUser(username, user.getPassword(), authorities, user);
     }
 }

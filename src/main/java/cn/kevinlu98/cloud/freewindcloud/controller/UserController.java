@@ -1,28 +1,37 @@
 package cn.kevinlu98.cloud.freewindcloud.controller;
 
 import cn.kevinlu98.cloud.freewindcloud.common.FWResult;
+import cn.kevinlu98.cloud.freewindcloud.common.MessageUtils;
+import cn.kevinlu98.cloud.freewindcloud.common.Passwd;
+import cn.kevinlu98.cloud.freewindcloud.common.RedirectUtils;
+import cn.kevinlu98.cloud.freewindcloud.common.SecurityUser;
 import cn.kevinlu98.cloud.freewindcloud.common.Website;
+import cn.kevinlu98.cloud.freewindcloud.common.enums.Role;
 import cn.kevinlu98.cloud.freewindcloud.common.enums.Site;
 import cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter;
 import cn.kevinlu98.cloud.freewindcloud.pojo.User;
 import cn.kevinlu98.cloud.freewindcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-import static cn.kevinlu98.cloud.freewindcloud.common.FileUtils.uploadPath;
 
 /**
  * Author: Mr丶冷文
@@ -43,15 +52,65 @@ public class UserController {
 
 
     @GetMapping("/")
-    public String index() {
+    public String index(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, Model model) {
+        if (!StringUtils.isEmptyOrWhitespace(msgType)) {
+            MessageUtils.msg(model, msgType, message);
+        }
         return "user/index";
+    }
+
+    @PostMapping("/pass")
+    public String pass(String cpass, String npass, String vpass, Model model) {
+        if (npass.length() < 6) {
+            return RedirectUtils.redirectError("/user/", "密码不能短于6位");
+        }
+        if (!StringUtils.equals(npass, vpass)) {
+            return RedirectUtils.redirectError("/user/", "两次密码输入不一致");
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loginUser = ((SecurityUser) authentication.getPrincipal()).getLoginUser();
+        if (!StringUtils.equalsIgnoreCase(Passwd.md5(cpass), loginUser.getPassword())) {
+            return RedirectUtils.redirectError("/user/", "原始密码输入错误");
+        }
+        if (StringUtils.equals(npass, cpass)) {
+            return RedirectUtils.redirectError("/user/", "新密码与原始密码相同");
+        }
+        User user = userService.save(User.builder().id(loginUser.getId()).password(Passwd.md5(npass)).build());
+        updateSecurity(user);
+        return RedirectUtils.redirectSuccess("/user/", "密码修改成功");
     }
 
 
     @PostMapping("/save")
-    public String save(String nickname, String email, String pass, String npass, String rpass, MultipartFile avatar) {
-        System.out.println(nickname);
-        return "redirect:/user/";
+    public String save(String username, String nickname, String email, String avatar, Model model) {
+        User user = new User();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loginUser = ((SecurityUser) authentication.getPrincipal()).getLoginUser();
+        user.setId(loginUser.getId());
+        if (Objects.equals(loginUser.getRole(), Role.ROLE_ADMIN.getValue())) {
+            user.setUsername(username);
+        }
+        user.setAvatar(avatar);
+        user.setNickname(nickname);
+        if (!StringUtils.equals(email, loginUser.getEmail())) {
+            if (userService.exists(email)) {
+                return RedirectUtils.redirectError("/user/", "邮箱已存在");
+            }
+            user.setEmail(email);
+        }
+        updateSecurity(user);
+        return RedirectUtils.redirectSuccess("/user/", "保存成功");
+    }
+
+    private void updateSecurity(User user) {
+        Role role = Role.find(user.getRole());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        user = userService.save(user);
+        SecurityUser designer = new SecurityUser(user.getUsername(), user.getPassword(), authorities, user);
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(designer, designer.getPassword(), designer.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
     }
 
     @PostMapping("/avatar")
@@ -75,7 +134,7 @@ public class UserController {
         } else {
             ename = "png";
         }
-        String filename = ResourceUtils.getURL("uploads").getPath() + authentication.getName() + "." + ename;
+        String filename = ResourceUtils.getURL("uploads").getPath() + File.separator + authentication.getName() + "." + ename;
         System.out.println(filename);
         File dest = new File(filename);
         if (!dest.getParentFile().exists()) {

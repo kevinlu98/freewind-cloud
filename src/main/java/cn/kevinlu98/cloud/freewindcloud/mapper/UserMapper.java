@@ -13,6 +13,8 @@ public interface UserMapper extends JpaRepository<User, Long> {
 
     Integer countByRole(Integer role);
 
+    Integer countByEmail(String email);
+
     User findUserByUsername(String username);
 
 }

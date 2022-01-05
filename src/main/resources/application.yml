@@ -1,6 +1,10 @@
 server:
   port: 8080
 spring:
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:/ehcache.xml
   datasource:
     url: jdbc:mysql:///freewind_cloud
     username: root

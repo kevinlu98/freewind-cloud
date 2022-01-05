@@ -40,5 +40,6 @@ public class User {
     @Column(nullable = false)
     private Long size;
 
+    @Column(nullable = false, columnDefinition = "0")
     private Long limitSize;
 }

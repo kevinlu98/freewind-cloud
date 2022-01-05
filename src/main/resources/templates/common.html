@@ -201,8 +201,8 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item nav-icon dropdown" th:if="${loginUser.role==1}">
-                            <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton02"
+                        <li class="nav-item nav-icon dropdown" th:if="${loginUser.role==T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}">
+                            <a th:href="@{/site/}" class="search-toggle dropdown-toggle" id="dropdownMenuButton02"
                                aria-haspopup="true" aria-expanded="false">
                                 <i class="ri-settings-3-line"></i>
                             </a>
@@ -219,7 +219,8 @@
                                 <div class="card shadow" style="margin-bottom: 0;">
                                     <div class="card-body p-0 ">
                                         <div class="p-3">
-                                            <a th:href="@{/user/}" class="iq-sub-card pt-0"><i class="ri-user-2-fill"></i>
+                                            <a th:href="@{/user/}" class="iq-sub-card pt-0"><i
+                                                    class="ri-user-2-fill"></i>
                                                 个人中心</a>
                                             <a th:href="@{/logout}" class="iq-sub-card" id="logout-btn"><i
                                                     class="ri-logout-box-fill"></i>退出登录</a>
@@ -266,6 +267,15 @@
     <script src="/static/js/doc-viewer.js"></script>
     <!-- app JavaScript -->
     <script src="/static/js/app.js"></script>
+    <script src="https://unpkg.com/coco-message/coco-message.min.js"></script>
+</div>
+<div th:fragment="message" th:if="${msgType}"
+     th:class="${'alert text-white bg-'+ (msgType=='success'?'success':'danger')}"
+     role="alert">
+    <div class="iq-alert-text" th:text="${message}"></div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <i class="ri-close-line"></i>
+    </button>
 </div>
 
 <footer class="iq-footer" th:fragment="footer">

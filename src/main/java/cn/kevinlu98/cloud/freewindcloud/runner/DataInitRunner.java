@@ -42,6 +42,7 @@ public class DataInitRunner implements ApplicationRunner {
                     .avatar("https://gitee.com/kevinlu98/imgbed/raw/master/20220104/LB7RDT37g2yn.png")
                     .role(Role.ROLE_ADMIN.getValue())
                     .size(1024 * 1024 * 1024L)
+                    .limitSize(1024 * 1024 * 100L)
                     .build();
             userMapper.save(user);
             log.info("以下是管理员信息：");

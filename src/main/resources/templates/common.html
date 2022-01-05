@@ -101,6 +101,7 @@
     </div>
 </div>
 <div class="iq-top-navbar" th:fragment="navbar">
+    <input type="hidden" id="spring-csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     <div class="iq-navbar-custom">
         <nav class="navbar navbar-expand-lg navbar-light p-0">
             <div class="iq-navbar-logo d-flex align-items-center justify-content-between">

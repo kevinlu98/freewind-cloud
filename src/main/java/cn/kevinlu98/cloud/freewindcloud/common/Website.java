@@ -43,6 +43,9 @@ public class Website {
     public String logoBlank() {
         return getValue(Site.SITE_LOGO_BLANK);
     }
+    public String avatarSize() {
+        return getValue(Site.SITE_AVATAR_SIZE);
+    }
 
     public String getValue(Site site) {
         Optional<Option> option = optionMapper.findById(site.getId());

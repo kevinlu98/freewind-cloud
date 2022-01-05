@@ -40,4 +40,5 @@ public class User {
     @Column(nullable = false)
     private Long size;
 
+    private Long limitSize;
 }

@@ -16,92 +16,125 @@
     <div th:replace="common::sidebar"></div>
     <div th:replace="common::navbar"></div>
 
+
     <div class="content-page">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xl-9 col-lg-8">
+                <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">我的信息</h4>
+                        <div class="card-body p-0">
+                            <div class="iq-edit-list usr-edit">
+                                <ul class="iq-edit-profile d-flex nav nav-pills">
+                                    <li class="col-md-6 p-0">
+                                        <a class="nav-link active" data-toggle="pill" href="#personal-information">
+                                            Personal Information
+                                        </a>
+                                    </li>
+                                    <li class="col-md-6 p-0">
+                                        <a class="nav-link" data-toggle="pill" href="#chang-pwd">
+                                            Change Password
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="new-user-info">
-                                <form th:action="@{/user/save}" method="post" enctype="multipart/form-data">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="row">
-                                                <div class="form-group col-md-12">
-                                                    <label for="username">用户名:</label>
-                                                    <input type="text" class="form-control" disabled id="username" th:value="${loginUser.username}"
-                                                           name="username" placeholder="用户名">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label for="nickname">昵称:</label>
-                                                    <input type="text" class="form-control" id="nickname" th:value="${loginUser.nickname}"
-                                                           name="nickname" placeholder="昵称">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label for="email">邮箱:</label>
-                                                    <input type="text" class="form-control" id="email" name="email"  th:value="${loginUser.email}"
-                                                           placeholder="邮箱">
-                                                </div>
-                                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="iq-edit-list-data">
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <div class="iq-header-title">
+                                            <h4 class="card-title">基本信息</h4>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="card-header d-flex justify-content-between">
-                                                <div class="header-title">
-                                                    <h4 class="card-title">修改头像</h4>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="form-group text-center">
-                                                    <div class="d-flex justify-content-center">
-                                                        <div class="crm-profile-img-edit position-relative">
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-md-12">
+                                                    <div class="profile-img-edit">
+                                                        <div class="crm-profile-img-edit">
                                                             <img class="crm-profile-pic rounded-circle avatar-100"
+                                                                 id="avatar-show"
                                                                  th:src="${loginUser.avatar}" alt="profile-pic">
                                                             <div class="crm-p-image bg-primary">
                                                                 <i class="las la-pen upload-button"></i>
-                                                                <input class="file-upload" type="file" name="avatar" th:value="${loginUser.avatar}"
+                                                                <input class="file-upload" type="file" name="avatar"
+                                                                       id="avatar-inpit" th:value="${loginUser.avatar}"
                                                                        accept="image/*">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="img-extension mt-3">
-                                                        <div class="d-inline-block align-items-center">
-                                                            <span>仅</span>
-                                                            <a href="javascript:void(0);">.jpg</a>
-                                                            <a href="javascript:void(0);">.png</a>
-                                                            <a href="javascript:void(0);">.jpeg</a>
-                                                            <span>允许</span>
-                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class=" row align-items-center">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="username">用户名:</label>
+                                                        <input type="text" class="form-control" id="username"
+                                                               th:if="${loginUser.role == T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}"
+                                                               name="username"
+                                                               th:value="${loginUser.username}">
+                                                        <input type="text" class="form-control" id="username" disabled
+                                                               th:if="${loginUser.role != T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}"
+                                                               th:value="${loginUser.username}">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="nickname">昵称:</label>
+                                                        <input type="text" class="form-control" id="nickname"
+                                                               name="nickname" th:value="${loginUser.nickname}">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="email">邮箱:</label>
+                                                        <input type="email" class="form-control" id="email" name="email"
+                                                               th:value="${loginUser.email}">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="size">我的容量:</label>
+                                                        <input type="email" class="form-control" id="size" disabled
+                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter).BTrim.convert(loginUser.size)}">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="limit">上传限制:</label>
+                                                        <input type="email" class="form-control" id="limit" disabled
+                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter).BTrim.convert(loginUser.limitSize)}">
                                                     </div>
                                                 </div>
                                             </div>
+                                            <button type="submit" class="btn btn-primary mr-2">确认更新</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <div class="iq-header-title">
+                                            <h4 class="card-title">Change Password</h4>
                                         </div>
                                     </div>
-                                    <hr>
-                                    <h5 class="mb-3">安全</h5>
-                                    <div class="row">
-                                        <input name="password" type="password"  style="display:none" autocomplete="new-password"/>
-                                        <div class="form-group col-md-12">
-                                            <label for="pass">原始密码:</label>
-                                            <input type="password" class="form-control" value="" name="pass" id="pass" placeholder="原始密码">
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="npass">新密码:</label>
-                                            <input type="password" class="form-control" id="npass" name="npass"
-                                                   placeholder="新密码">
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="rpass">确认密码:</label>
-                                            <input type="password" class="form-control" id="rpass" name="rpass"
-                                                   placeholder="确认密码">
-                                        </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="cpass">Current Password:</label>
+                                                <a href="javascripe:void();" class="float-right">Forgot Password</a>
+                                                <input type="Password" class="form-control" id="cpass" value="">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="npass">New Password:</label>
+                                                <input type="Password" class="form-control" id="npass" value="">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="vpass">Verify Password:</label>
+                                                <input type="Password" class="form-control" id="vpass" value="">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                            <button type="reset" class="btn iq-bg-danger">Cancel</button>
+                                        </form>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">确认修改</button>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -113,5 +146,29 @@
 <div th:replace="common::footer"></div>
 <div th:include="common::script"></div>
 <div th:replace="common::modal"></div>
+<script>
+    $(function () {
+        $("#avatar-inpit").on('change', function () {
+            let csrf = $("#spring-csrf");
+            let formData = new FormData();
+            formData.append("file", this.files[0])
+            formData.append(csrf.attr("name"), csrf.val())
+            $.ajax({
+                url: "/user/avatar",
+                type: "post",
+                dataType: "json",
+                cache: false,
+                data: formData,
+                processData: false,// 不处理数据
+                contentType: false, // 不设置内容类型
+                success: res => {
+                    if (res.success) {
+                        $("#avatar-show").attr("src", res.data)
+                    }
+                }
+            })
+        })
+    })
+</script>
 </body>
 </html>

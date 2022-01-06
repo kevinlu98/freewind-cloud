@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
+<head th:replace="common::head"><title></title></head>
+
+<body>
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
+<div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
+
+    <div th:replace="common::sidebar"></div>
+    <div th:replace="common::navbar"></div>
+
+    <div class="content-page">
+        <div class="container-fluid">
+            <div th:replace="common::message"></div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="iq-edit-list-data">
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <div class="iq-header-title">
+                                            <h4 class="card-title">站点设置</h4>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="jsGrid"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common::footer"></div>
+<div th:include="common::script"></div>
+<div th:replace="common::modal"></div>
+<script>
+    $(function () {
+        var clients = [
+            {"Name": "Otto Clay", "Age": 25, "Country": 1, "Address": "Ap #897-1459 Quam Avenue", "Married": false},
+            {"Name": "Connor Johnston", "Age": 45, "Country": 2, "Address": "Ap #370-4647 Dis Av.", "Married": true},
+            {"Name": "Lacey Hess", "Age": 29, "Country": 3, "Address": "Ap #365-8835 Integer St.", "Married": false},
+            {"Name": "Timothy Henson", "Age": 56, "Country": 1, "Address": "911-5143 Luctus Ave", "Married": true},
+            {
+                "Name": "Ramona Benton",
+                "Age": 32,
+                "Country": 3,
+                "Address": "Ap #614-689 Vehicula Street",
+                "Married": false
+            }
+        ];
+
+        var countries = [
+            {Name: "", Id: 0},
+            {Name: "United States", Id: 1},
+            {Name: "Canada", Id: 2},
+            {Name: "United Kingdom", Id: 3}
+        ];
+
+        $("#jsGrid").jsGrid({
+            width: "100%",
+            height: "800px",
+            inserting: true,
+            editing: true,
+            sorting: true,
+            data: [],
+            fields: [
+                {name: "id", type: "number", title: '用户id', width: 150, validate: "required"},
+                {name: "avatar", type: "text", title: '头像',width: 50},
+                {name: "username", type: "text", title: '用户名',width: 200},
+                {name: "nickname", type: "text",title: '用户昵称', width: 200},
+                {name: "email", type: "text", title: "邮箱",width: 200},
+                {name: "size", type: "text", title: "容量",width: 200},
+                {name: "limitSize", type: "text", title: "上传限制",width: 200},
+                {type: "control"}
+            ]
+        });
+    })
+</script>
+</body>
+</html>

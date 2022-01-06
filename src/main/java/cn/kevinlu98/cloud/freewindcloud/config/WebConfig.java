@@ -17,8 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import static cn.kevinlu98.cloud.freewindcloud.common.FileUtils.uploadPath;
-
 /**
  * Author: 鲁恺文
  * Date: 2022-01-04 16:45

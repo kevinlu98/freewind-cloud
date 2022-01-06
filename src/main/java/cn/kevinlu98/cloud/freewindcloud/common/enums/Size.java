@@ -1,13 +1,20 @@
 package cn.kevinlu98.cloud.freewindcloud.common.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Author: 鲁恺文
  * Date: 2022-01-04 16:32
  * Email: lukaiwen@xiaomi.com
  * Description:
  */
-public enum SizeConverter {
-    /** 转换任意单位的大小, 返回结果会包含两位小数但不包含单位. */
+public enum Size {
+    /**
+     * 转换任意单位的大小, 返回结果会包含两位小数但不包含单位.
+     */
     Arbitrary {
         @Override
         public String convert(float size) {
@@ -20,35 +27,45 @@ public enum SizeConverter {
 
     // -----------------------------------------------------------------------
     // 有单位
-    /** 转换单位为B的大小, 返回结果会包含两位小数以及单位. 如: 1024B->1KB, (1024*1024)B->1MB */
+    /**
+     * 转换单位为B的大小, 返回结果会包含两位小数以及单位. 如: 1024B->1KB, (1024*1024)B->1MB
+     */
     B {
         @Override
         public String convert(float B) {
             return converter(0, B);
         }
     },
-    /** 转换单位为B的大小, 返回结果会包含两位小数以及单位. */
+    /**
+     * 转换单位为B的大小, 返回结果会包含两位小数以及单位.
+     */
     KB {
         @Override
         public String convert(float KB) {
             return converter(1, KB);
         }
     },
-    /** 转换单位为MB的大小, 返回结果会包含两位小数以及单位. */
+    /**
+     * 转换单位为MB的大小, 返回结果会包含两位小数以及单位.
+     */
     MB {
         @Override
         public String convert(float MB) {
             return converter(2, MB);
         }
     },
-    /** 转换单位为GB的大小, 返回结果会包含两位小数以及单位. */
+    /**
+     * 转换单位为GB的大小, 返回结果会包含两位小数以及单位.
+     */
     GB {
         @Override
         public String convert(float GB) {
             return converter(3, GB);
         }
     },
-    /** 转换单位为TB的大小, 返回结果会包含两位小数以及单位. */
+    /**
+     * 转换单位为TB的大小, 返回结果会包含两位小数以及单位.
+     */
     TB {
         @Override
         public String convert(float TB) {
@@ -58,7 +75,9 @@ public enum SizeConverter {
 
     // -----------------------------------------------------------------------
     // trim没单位
-    /** 转换任意单位的大小, 返回结果小数部分为0时将去除两位小数, 不包含单位. */
+    /**
+     * 转换任意单位的大小, 返回结果小数部分为0时将去除两位小数, 不包含单位.
+     */
     ArbitraryTrim {
         @Override
         public String convert(float size) {
@@ -77,41 +96,52 @@ public enum SizeConverter {
 
     // -----------------------------------------------------------------------
     // trim有单位
-    /** 转换单位为B的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位. */
+    /**
+     * 转换单位为B的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位.
+     */
     BTrim {
         @Override
         public String convert(float B) {
             return trimConverter(0, B);
         }
     },
-    /** 转换单位为KB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位. */
+    /**
+     * 转换单位为KB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位.
+     */
     KBTrim {
         @Override
         public String convert(float KB) {
             return trimConverter(1, KB);
         }
     },
-    /** 转换单位为MB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位. */
+    /**
+     * 转换单位为MB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位.
+     */
     MBTrim {
         @Override
         public String convert(float MB) {
             return trimConverter(2, MB);
         }
     },
-    /** 转换单位为GB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位. */
+    /**
+     * 转换单位为GB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位.
+     */
     GBTrim {
         @Override
         public String convert(float GB) {
             return trimConverter(3, GB);
         }
     },
-    /** 转换单位为TB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位. */
+    /**
+     * 转换单位为TB的大小, 返回结果小数部分为0时将去除两位小数, 会包含单位.
+     */
     TBTrim {
         @Override
         public String convert(float TB) {
             return trimConverter(4, TB);
         }
     };
+
     /***
      * <p> 将指定的大小转换到1024范围内的大小. 注意该方法的最大单位为PB, 最小单位为B,
      * 任何超出该范围的单位最终会显示为**. </p>
@@ -126,11 +156,11 @@ public enum SizeConverter {
     // -----------------------------------------------------------------------
     // 单位转换
 
-    private static final String[] UNITS = new String[] {
-        "B", "KB", "MB", "GB", "TB", "PB", "**"
+    private static final String[] UNITS = new String[]{
+            "B", "KB", "MB", "GB", "TB", "PB", "**"
     };
 
-    private static final int LAST_IDX = UNITS.length-1;
+    private static final int LAST_IDX = UNITS.length - 1;
 
     private static final String FORMAT_F = "%1$-1.2f";
     private static final String FORMAT_F_UNIT = "%1$-1.2f%2$s";
@@ -176,6 +206,28 @@ public enum SizeConverter {
 
     public static String convertMB(float MB, boolean trim) {
         return trim ? trimConvert(2, MB, true) : convert(2, MB, true);
+    }
+
+    static Map<String, Float> unitMap = new HashMap<>();
+
+    static {
+        int z = 0;
+        for (String unit : UNITS) {
+            unitMap.put(unit, (float) Math.pow(1024, z++));
+        }
+    }
+
+    public static float convertBase(String size) {
+        String pattern = "\\D+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher matcher = r.matcher(size);
+        if (matcher.find()) {
+            String unit = matcher.group();
+            Float un = unitMap.get(unit.toUpperCase());
+            long sizeL = Long.parseLong(size.replaceAll("\\D", ""));
+            return sizeL * un;
+        }
+        return 0f;
     }
 
     /***

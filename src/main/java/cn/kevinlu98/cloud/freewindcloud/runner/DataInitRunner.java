@@ -2,7 +2,6 @@ package cn.kevinlu98.cloud.freewindcloud.runner;
 
 import cn.kevinlu98.cloud.freewindcloud.common.Passwd;
 import cn.kevinlu98.cloud.freewindcloud.common.enums.Role;
-import cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter;
 import cn.kevinlu98.cloud.freewindcloud.mapper.UserMapper;
 import cn.kevinlu98.cloud.freewindcloud.pojo.User;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.util.DigestUtils;
-
-import java.net.Inet4Address;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * Author: 鲁恺文

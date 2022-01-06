@@ -29,7 +29,7 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <form th:action="@{/user/save}" method="post">
+                                        <form th:action="@{/site/save/}" method="post">
                                             <div class=" row align-items-center">
                                                 <div class="col-sm-6">
                                                     <div class="form-group col-sm-12">
@@ -49,30 +49,41 @@
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>站点favicon:</label>
-                                                        <img style="border-radius: 3px;margin-left: 10px;cursor: pointer"
-                                                             class="crm-profile-pic avatar-50 shadow border-primary"
+                                                        <img style="border-radius: 3px;margin-left: 10px;cursor: pointer;"
+                                                             data-input="favicon-file" id="favicon-img"
+                                                             class="lw-upload-img crm-profile-pic avatar-50 shadow border-primary"
                                                              th:src="${site.icon()}" alt="profile-pic" src="">
-                                                        <input class="file-upload" type="file" accept="image/*">
-                                                        <input type="hidden" class="form-control"
+                                                        <input class="file-upload" type="file" id="favicon-file"
+                                                               data-hidden="favicon-hidden" data-img="favicon-img"
+                                                               accept="image/*">
+                                                        <input type="hidden" class="form-control" id="favicon-hidden"
                                                                th:value="${site.icon()}" name="icon" required>
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>站点图标(正常):</label>
-                                                        <img style="border-radius: 3px;margin-left: 10px;background-color:#fff;cursor: pointer"
-                                                             class="crm-profile-pic shadow"
+                                                        <img style="border-radius: 3px;width: 200px;margin-left: 10px;background-color:#fff;cursor: pointer"
+                                                             class="lw-upload-img crm-profile-pic shadow"
+                                                             id="logo-normal-img" data-input="logo-normal-file"
                                                              th:src="${site.logoBlank()}" alt="profile-pic" src="">
-                                                        <input class="file-upload" type="file" accept="image/*">
+                                                        <input class="file-upload" type="file" id="logo-normal-file"
+                                                               data-hidden="logo-normal-hidden"
+                                                               data-img="logo-normal-img"
+                                                               accept="image/*">
                                                         <input type="hidden" class="form-control"
+                                                               id="logo-normal-hidden"
                                                                th:value="${site.logoBlank()}" name="logo_blank"
                                                                required>
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>站点图标(暗色):</label>
-                                                        <img style="border-radius: 3px;background-color:#121212;margin-left: 10px;cursor: pointer"
-                                                             class="crm-profile-pic shadow"
+                                                        <img style="border-radius: 3px;width: 200px;background-color:#121212;margin-left: 10px;cursor: pointer"
+                                                             id="logo-an-img" data-input="logo-an-file"
+                                                             class="lw-upload-img crm-profile-pic shadow"
                                                              th:src="${site.logoWhite()}" alt="profile-pic" src="">
-                                                        <input class="file-upload" type="file" accept="image/*">
-                                                        <input type="hidden" class="form-control"
+                                                        <input class="file-upload" type="file" id="logo-an-file"
+                                                               data-hidden="logo-an-hidden" data-img="logo-an-img"
+                                                               accept="image/*">
+                                                        <input type="hidden" class="form-control" id="logo-an-hidden"
                                                                th:value="${site.logoWhite()}" name="logo_white"
                                                                required>
                                                     </div>
@@ -80,19 +91,19 @@
                                                         <label>允许用户上传头像大小:</label>
                                                         <input class="form-control" name="avatar_size" required
                                                                type="text"
-                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter).BTrim.convert(site.avatarSize())}">
+                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Size).BTrim.convert(site.avatarSize())}">
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>用户默认空间大小:</label>
                                                         <input class="form-control" name="default_max_size" required
                                                                type="text"
-                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter).BTrim.convert(site.defaultMaxSize())}">
+                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Size).BTrim.convert(site.defaultMaxSize())}">
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>用户上传大小限制:</label>
                                                         <input class="form-control" name="upload_limit" required
                                                                type="text"
-                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.SizeConverter).BTrim.convert(site.uploadLimit())}">
+                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Size).BTrim.convert(site.uploadLimit())}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -113,13 +124,13 @@
 <div th:replace="common::modal"></div>
 <script>
     $(function () {
-        $("#avatar-inpit").on('change', function () {
+        $(".file-upload").on('change', function () {
             let csrf = $("#spring-csrf");
             let formData = new FormData();
             formData.append("file", this.files[0])
             formData.append(csrf.attr("name"), csrf.val())
             $.ajax({
-                url: "/user/avatar",
+                url: "/site/upload",
                 type: "post",
                 dataType: "json",
                 cache: false,
@@ -128,11 +139,16 @@
                 contentType: false, // 不设置内容类型
                 success: res => {
                     if (res.success) {
-                        $("#avatar-show").attr("src", res.data)
-                        $("#avatar-hidden").val(res.data)
+                        $(`#${$(this).data('hidden')}`).val(res.data)
+                        $(`#${$(this).data('img')}`).attr('src', res.data)
                     }
                 }
             })
+        })
+
+        $(".lw-upload-img").on('click', function () {
+            let target = $(this).data('input')
+            $(`#${target}`).click()
         })
     })
 </script>

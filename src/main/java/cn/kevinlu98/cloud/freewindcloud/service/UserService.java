@@ -4,6 +4,9 @@ import cn.kevinlu98.cloud.freewindcloud.common.PojoUtils;
 import cn.kevinlu98.cloud.freewindcloud.mapper.UserMapper;
 import cn.kevinlu98.cloud.freewindcloud.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +24,13 @@ public class UserService {
 
     public boolean exists(String email) {
         return userMapper.countByEmail(email) > 0;
+    }
+
+    public Page<User> listUser(int page, int size) {
+        page = Math.max(page, 1);
+        size = Math.max(size, 1);
+        Pageable pageable = PageRequest.of(page, size);
+        return userMapper.findAll(pageable);
     }
 
     public User save(User user) {

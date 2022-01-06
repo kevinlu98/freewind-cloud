@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
 
 <!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
 <head th:replace="common::head"></head>
@@ -26,44 +25,8 @@
                             <div class="select-dropdown input-prepend input-append">
                                 <div class="btn-group">
                                     <label data-toggle="dropdown">
-                                        <div class="dropdown-toggle search-query">My Drive<i
-                                                class="las la-angle-down ml-3"></i></div>
-                                        <span class="search-replace"></span>
-                                        <span class="caret"><!--icon--></span>
+                                        <div class="dropdown-toggle search-query"> 我的设备</div>
                                     </label>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <div class="item"><i class="ri-folder-add-line pr-3"></i>New Folder</div>
-                                        </li>
-                                        <li>
-                                            <div class="item"><i class="ri-file-upload-line pr-3"></i>Upload Files</div>
-                                        </li>
-                                        <li>
-                                            <div class="item"><i class="ri-folder-upload-line pr-3"></i>Upload Folders
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="dashboard1-dropdown d-flex align-items-center">
-                                <div class="dashboard1-info">
-                                    <a href="#calander" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                                        <i class="ri-arrow-down-s-line"></i>
-                                    </a>
-                                    <ul id="calander" class="iq-dropdown collapse list-inline m-0 p-0 mt-2">
-                                        <li class="mb-2">
-                                            <a href="#" data-toggle="tooltip" data-placement="right" title="Calander"><i
-                                                    class="las la-calendar iq-arrow-left"></i></a>
-                                        </li>
-                                        <li class="mb-2">
-                                            <a href="#" data-toggle="tooltip" data-placement="right" title="Keep"><i
-                                                    class="las la-lightbulb iq-arrow-left"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-toggle="tooltip" data-placement="right" title="Tasks"><i
-                                                    class="las la-tasks iq-arrow-left"></i></a>
-                                        </li>
-                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -75,9 +38,9 @@
                         <div class="card-body property2-content">
                             <div class="d-flex flex-wrap align-items-center">
                                 <div class="col-lg-6 col-sm-6 p-0">
-                                    <h3 class="mb-3">Welcome Penny</h3>
-                                    <p class="mb-5">You have 32 new notifications and 23 unread messages to reply</p>
-                                    <a href="#">Try Now<i class="las la-arrow-right ml-2"></i></a>
+                                    <h3 class="mb-3" th:text="${'欢迎回来，'+loginUser.nickname}"></h3>
+                                    <p class="mb-5">欢迎使用 <span th:text="${site.title()}"></span></p>
+                                    <a href="#">立即使用<i class="las la-arrow-right ml-2"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +50,7 @@
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Quick Access</h4>
+                                <h4 class="card-title">快速访问</h4>
                             </div>
                         </div>
                         <div class="card-body">
@@ -101,7 +64,7 @@
                                             <img src="/static/images/layouts/mydrive/folder-1.png"
                                                  class="img-fluid mb-1" alt="image1">
                                         </div>
-                                        <p class="mb-0">Planning</p>
+                                        <p class="mb-0">计划书.pdf</p>
                                     </div>
                                 </li>
                                 <li class="col-lg-6 col-sm-6">
@@ -113,7 +76,7 @@
                                             <img src="/static/images/layouts/mydrive/folder-2.png"
                                                  class="img-fluid mb-1" alt="image2">
                                         </div>
-                                        <p class="mb-0">Wireframe</p>
+                                        <p class="mb-0">年终总结.docx</p>
                                     </div>
 
                                 </li>

@@ -1,14 +1,24 @@
 package cn.kevinlu98.cloud.freewindcloud.controller;
 
-import cn.kevinlu98.cloud.freewindcloud.common.MessageUtils;
+import cn.kevinlu98.cloud.freewindcloud.common.*;
+import cn.kevinlu98.cloud.freewindcloud.common.enums.Size;
 import cn.kevinlu98.cloud.freewindcloud.service.OptionService;
+import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Author: Mr丶冷文
@@ -29,5 +39,30 @@ public class SiteController {
             MessageUtils.msg(model, msgType, message);
         }
         return "site/index";
+    }
+
+    @CacheEvict(value = {"site_config"}, allEntries = true)
+    @PostMapping("/save")
+    public String save(HttpServletRequest request) {
+        Map<String, String> siteItems = new HashMap<>();
+        request.getParameterMap().forEach((k, v) -> siteItems.put(k, v[0]));
+        long avatarSize = (long) Size.convertBase(siteItems.get("avatar_size"));
+        siteItems.put("avatar_size", avatarSize + "");
+        long defaultMaxSize = (long) Size.convertBase(siteItems.get("default_max_size"));
+        siteItems.put("default_max_size", defaultMaxSize + "");
+        long uploadLimit = (long) Size.convertBase(siteItems.get("upload_limit"));
+        siteItems.put("upload_limit", uploadLimit + "");
+        siteItems.forEach((k, v) -> optionService.update(k, v));
+        return RedirectUtils.redirectSuccess("/site/","站点设置保存成功");
+    }
+
+    @ResponseBody
+    @PostMapping("/upload")
+    public FWResult<String> upload(@RequestParam("file") MultipartFile file) throws IOException {
+        DateFormat df = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd" + File.separator);
+        String filename = df.format(new Date());
+        filename += Passwd.rdmPass(8);
+        System.out.println(filename);
+        return FileUtils.uploadImg(file, filename);
     }
 }

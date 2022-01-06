@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
 <head th:fragment="head">
     <meta charset="utf-8">
@@ -9,42 +8,27 @@
     <meta name="keywords" th:content="${site.keywords()}">
     <meta name="description" th:content="${site.desc()}">
 
-    <!-- Favicon -->
     <link rel="shortcut icon" th:href="${site.icon()}"/>
-
-
-    <link rel="stylesheet" href="/static/css/backend.min.css">
-    <link rel="stylesheet" href="/static/vendor/@fortawesome/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="/static/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
-    <link rel="stylesheet" href="/static/vendor/remixicon/fonts/remixicon.css">
-
-    <!-- Viewer Plugin -->
-    <!--PDF-->
-    <link rel="stylesheet" href="/static/vendor/doc-viewer/include/pdf/pdf.viewer.css">
-    <!--Docs-->
-    <!--PPTX-->
-    <link rel="stylesheet" href="/static/vendor/doc-viewer/include/PPTXjs/css/pptxjs.css">
-    <link rel="stylesheet" href="/static/vendor/doc-viewer/include/PPTXjs/css/nv.d3.min.css">
-    <!--All Spreadsheet -->
-    <link rel="stylesheet" href="/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.css">
-    <!--Image viewer-->
-    <link rel="stylesheet"
-          href="/static/vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css">
-    <!--officeToHtml-->
-    <link rel="stylesheet" href="/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.css">
-    <style>
-        .avatar-br {
-            border-radius: 50%;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/static/css/backend.min.css}">
+    <link rel="stylesheet" th:href="@{'/static/vendor/@fortawesome/fontawesome-free/css/all.min.css'}">
+    <link rel="stylesheet" th:href="@{/static/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/remixicon/fonts/remixicon.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/pdf/pdf.viewer.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/PPTXjs/css/pptxjs.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/PPTXjs/css/nv.d3.min.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.css}">
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
 </head>
 <body>
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
 <div class="iq-sidebar  sidebar-default " th:fragment="sidebar">
     <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
-        <a href="index.html" class="header-logo">
-            <img th:src="${site.logoBlank()}" class="img-fluid rounded-normal light-logo" alt="logo">
-            <img th:src="${site.logoWhite()}" class="img-fluid rounded-normal darkmode-logo" alt="logo">
+        <a th:href="@{/}" class="header-logo">
+            <img th:src="${site.logoBlank()}" class="img-fluid rounded-normal light-logo" alt="logo" src="">
+            <img th:src="${site.logoWhite()}" class="img-fluid rounded-normal darkmode-logo" alt="logo" src="">
         </a>
         <div class="iq-menu-bt-sidebar">
             <i class="las la-bars wrapper-menu"></i>
@@ -54,14 +38,18 @@
         <nav class="iq-sidebar-menu">
             <ul id="iq-sidebar-toggle" class="iq-menu">
                 <li class="active">
-                    <a href="index.html" class="">
+                    <a th:href="@{/}" class="">
                         <i class="las la-home iq-arrow-left"></i><span>控制台</span>
                     </a>
-                    <ul id="dashboard" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                    </ul>
+                </li>
+                <li class=""
+                    th:if="${loginUser.role==T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.value}">
+                    <a th:href="@{/user/list}" class="">
+                        <i class="las la-user iq-arrow-left"></i><span>用户管理</span>
+                    </a>
                 </li>
                 <li class=" ">
-                    <a href="#mydrive" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <a href="#" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <i class="las la-hdd"></i><span>我的云盘</span>
                     </a>
                 </li>
@@ -107,8 +95,8 @@
             <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                 <i class="ri-menu-line wrapper-menu"></i>
                 <a href="index.html" class="header-logo">
-                    <img th:src="${site.logoBlank()}" class="img-fluid rounded-normal light-logo" alt="logo">
-                    <img th:src="${site.logoWhite()}" class="img-fluid rounded-normal darkmode-logo" alt="logo">
+                    <img th:src="${site.logoBlank()}" class="img-fluid rounded-normal light-logo" alt="logo" src="">
+                    <img th:src="${site.logoWhite()}" class="img-fluid rounded-normal darkmode-logo" alt="logo" src="">
                 </a>
             </div>
             <div class="iq-search-bar device-search">
@@ -201,7 +189,8 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item nav-icon dropdown" th:if="${loginUser.role==T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}">
+                        <li class="nav-item nav-icon dropdown"
+                            th:if="${loginUser.role==T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}">
                             <a th:href="@{/site/}" class="search-toggle dropdown-toggle" id="dropdownMenuButton02"
                                aria-haspopup="true" aria-expanded="false">
                                 <i class="ri-settings-3-line"></i>
@@ -210,8 +199,8 @@
                         <li class="nav-item nav-icon dropdown caption-content">
                             <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton03"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img th:src="${loginUser.avatar}" class="avatar-30 avatar-br shadow-sm"
-                                     alt="">
+                                <img th:src="${loginUser.avatar}" class="avatar-30 rounded-circle shadow-sm"
+                                     alt="" src="">
                                 <span th:text="${loginUser.nickname}"></span>
                             </a>
                             <div class="iq-sub-dropdown dropdown-menu" style="width: 100px;"
@@ -238,36 +227,25 @@
 
 
 <div th:fragment="script">
-    <!-- Backend Bundle JavaScript -->
-    <script src="/static/js/backend-bundle.min.js"></script>
-    <!-- Chart Custom JavaScript -->
-    <script src="/static/js/customizer.js"></script>
-
-    <!-- Chart Custom JavaScript -->
-    <script src="/static/js/chart-custom.js"></script>
-
-    <!--PDF-->
-    <script src="/static/vendor/doc-viewer/include/pdf/pdf.js"></script>
-    <!--Docs-->
-    <script src="/static/vendor/doc-viewer/include/docx/jszip-utils.js"></script>
-    <script src="/static/vendor/doc-viewer/include/docx/mammoth.browser.min.js"></script>
-    <!--PPTX-->
-    <script src="/static/vendor/doc-viewer/include/PPTXjs/js/filereader.js"></script>
-    <script src="/static/vendor/doc-viewer/include/PPTXjs/js/d3.min.js"></script>
-    <script src="/static/vendor/doc-viewer/include/PPTXjs/js/nv.d3.min.js"></script>
-    <script src="/static/vendor/doc-viewer/include/PPTXjs/js/pptxjs.js"></script>
-    <script src="/static/vendor/doc-viewer/include/PPTXjs/js/divs2slides.js"></script>
-    <!--All Spreadsheet -->
-    <script src="/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.js"></script>
-    <script src="/static/vendor/doc-viewer/include/SheetJS/xlsx.full.min.js"></script>
-    <!--Image viewer-->
-    <script src="/static/vendor/doc-viewer/include/verySimpleImageViewer/js/jquery.verySimpleImageViewer.js"></script>
-    <!--officeToHtml-->
-    <script src="/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.js"></script>
-    <script src="/static/js/doc-viewer.js"></script>
-    <!-- app JavaScript -->
-    <script src="/static/js/app.js"></script>
+    <script th:src="@{/static/js/backend-bundle.min.js}"></script>
+    <script th:src="@{/static/js/customizer.js}"></script>
+    <script th:src="@{/static/js/chart-custom.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/pdf/pdf.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/docx/jszip-utils.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/docx/mammoth.browser.min.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/PPTXjs/js/filereader.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/PPTXjs/js/d3.min.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/PPTXjs/js/nv.d3.min.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/PPTXjs/js/pptxjs.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/PPTXjs/js/divs2slides.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/SheetJS/xlsx.full.min.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/verySimpleImageViewer/js/jquery.verySimpleImageViewer.js}"></script>
+    <script th:src="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.js}"></script>
+    <script th:src="@{/static/js/doc-viewer.js}"></script>
+    <script th:src="@{/static/js/app.js}"></script>
     <script src="https://unpkg.com/coco-message/coco-message.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 </div>
 <div th:fragment="message" th:if="${msgType}"
      th:class="${'alert text-white bg-'+ (msgType=='success'?'success':'danger')}"

@@ -19,9 +19,10 @@ public enum Site {
     SITE_ICON(4, "icon", "/static/images/favicon.ico"),
     SITE_LOGO_BLANK(5, "logo_blank", "/static/images/logo/logo-blank.png"),
     SITE_LOGO_WHITE(6, "logo_white", "/static/images/logo/logo-white.png"),
-    SITE_AVATAR_SIZE(7, "avatar_size", "1048576"),
-    SITE_DEFAULT_MAX_SIZE(8, "default_max_size", "1073741824"),
-    SITE_UPLOAD_LIMIT(9, "upload_limit", "104857600"),
+    SITE_AVATAR_SIZE(7, "avatar_size", "1MB"),
+    SITE_DEFAULT_MAX_SIZE(8, "default_max_size", "2GB"),
+    SITE_UPLOAD_LIMIT(9, "upload_limit", "100MB"),
+    SITE_USER_DEFAULT_AVATAR(10, "user_default_avatar", "https://gitee.com/kevinlu98/imgbed/raw/master/20220104/LB7RDT37g2yn.png"),
     ;
     private final Integer id;
     private final String name;

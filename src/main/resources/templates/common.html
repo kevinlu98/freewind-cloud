@@ -19,8 +19,6 @@
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.css}">
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
 </head>
 <body>
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
@@ -245,7 +243,6 @@
     <script th:src="@{/static/js/doc-viewer.js}"></script>
     <script th:src="@{/static/js/app.js}"></script>
     <script src="https://unpkg.com/coco-message/coco-message.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 </div>
 <div th:fragment="message" th:if="${msgType}"
      th:class="${'alert text-white bg-'+ (msgType=='success'?'success':'danger')}"

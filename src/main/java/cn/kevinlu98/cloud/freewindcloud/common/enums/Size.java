@@ -222,7 +222,10 @@ public enum Size {
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(size);
         if (matcher.find()) {
-            String unit = matcher.group();
+            String unit = matcher.group().toUpperCase().trim();
+            if (!unit.endsWith("B")) {
+                unit += "B";
+            }
             Float un = unitMap.get(unit.toUpperCase());
             long sizeL = Long.parseLong(size.replaceAll("\\D", ""));
             return sizeL * un;

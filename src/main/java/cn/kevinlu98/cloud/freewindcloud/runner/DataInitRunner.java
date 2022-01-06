@@ -1,6 +1,7 @@
 package cn.kevinlu98.cloud.freewindcloud.runner;
 
 import cn.kevinlu98.cloud.freewindcloud.common.Passwd;
+import cn.kevinlu98.cloud.freewindcloud.common.Website;
 import cn.kevinlu98.cloud.freewindcloud.common.enums.Role;
 import cn.kevinlu98.cloud.freewindcloud.mapper.UserMapper;
 import cn.kevinlu98.cloud.freewindcloud.pojo.User;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
 public class DataInitRunner implements ApplicationRunner {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private Website website;
 
 
     @Override
@@ -33,10 +36,10 @@ public class DataInitRunner implements ApplicationRunner {
                     .nickname(username)
                     .username(username)
                     .password(Passwd.md5(password))
-                    .avatar("https://gitee.com/kevinlu98/imgbed/raw/master/20220104/LB7RDT37g2yn.png")
+                    .avatar(website.userDefaultAvatar())
                     .role(Role.ROLE_ADMIN.getValue())
-                    .size(1024 * 1024 * 1024L)
-                    .limitSize(1024 * 1024 * 100L)
+                    .size(website.defaultMaxSize())
+                    .limitSize(website.uploadLimit())
                     .build();
             userMapper.save(user);
             log.info("以下是管理员信息：");

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
+<head th:replace="common::head"><title></title></head>
+
+<body>
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
+<div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
+
+    <div th:replace="common::sidebar"></div>
+    <div th:replace="common::navbar"></div>
+
+    <div class="content-page">
+        <div class="container-fluid">
+            <div th:replace="common::message"></div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="iq-edit-list-data">
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <div class="iq-header-title">
+                                            <h4 class="card-title" th:text="${'编辑用户：'+user.nickname}"></h4>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <form th:action="@{/user/edit/{id}(id=${user.id})}" method="post">
+                                            <div class=" row align-items-center">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="username">用户名:</label>
+                                                        <input type="text" class="form-control" id="username"
+                                                               th:value="${user.username}"
+                                                               disabled required>
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="nickname">昵称:</label>
+                                                        <input type="text" class="form-control" id="nickname" required
+                                                               th:value="${user.nickname}"
+                                                               name="nickname">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="role">权限:</label>
+                                                        <select name="role" id="role" class="form-control" required>
+                                                            <option th:each="role:${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).values()}"
+                                                                    th:selected="${role.value==user.role?'selected':''}"
+                                                                    th:value="${role.value}"
+                                                                    th:text="${role.desc}"></option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="email">邮箱:</label>
+                                                        <input type="email" class="form-control" id="email" name="email" th:value="${user.email}"
+                                                               required>
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="size">容量:</label>
+                                                        <input type="text" class="form-control" id="size"
+                                                               name="size"
+                                                               th:value="${user.size}">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="limit">上传限制:</label>
+                                                        <input type="text" class="form-control" id="limit"
+                                                               name="limitSize"
+                                                               th:value="${user.limitSize}">
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
+                                                        <a th:href="@{/user/list}" class="btn btn-primary mr-2">返回</a>
+                                                        <button type="submit" class="btn btn-success mr-2">保存</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common::footer"></div>
+<div th:include="common::script"></div>
+<div th:replace="common::modal"></div>
+<script>
+    $(function () {
+        $("#avatar-inpit").on('change', function () {
+            let csrf = $("#spring-csrf");
+            let formData = new FormData();
+            formData.append("file", this.files[0])
+            formData.append(csrf.attr("name"), csrf.val())
+            $.ajax({
+                url: "/user/avatar",
+                type: "post",
+                dataType: "json",
+                cache: false,
+                data: formData,
+                processData: false,// 不处理数据
+                contentType: false, // 不设置内容类型
+                success: res => {
+                    if (res.success) {
+                        $("#avatar-show").attr("src", res.data)
+                        $("#avatar-hidden").val(res.data)
+                    }
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

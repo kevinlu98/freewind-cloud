@@ -22,13 +22,25 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public boolean exists(String email) {
+    public boolean existsEmail(String email) {
         return userMapper.countByEmail(email) > 0;
     }
+
+    public boolean existsUsername(String username) {
+        return userMapper.countByUsername(username) > 0;
+    }
+
+    public User find(long id) {
+        if (id < 1) return null;
+        Optional<User> user = userMapper.findById(id);
+        return user.orElse(null);
+    }
+
 
     public Page<User> listUser(int page, int size) {
         page = Math.max(page, 1);
         size = Math.max(size, 1);
+        page -= 1;
         Pageable pageable = PageRequest.of(page, size);
         return userMapper.findAll(pageable);
     }

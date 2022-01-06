@@ -48,6 +48,18 @@
                                                                   th:text="${site.desc()}"></textarea>
                                                     </div>
                                                     <div class="form-group col-sm-12">
+                                                        <label>用户默认头像:</label>
+                                                        <img style="border-radius: 3px;margin-left: 10px;cursor: pointer;"
+                                                             data-input="avatar-file" id="avatar-img"
+                                                             class="lw-upload-img crm-profile-pic avatar-50 rounded-circle shadow border-primary"
+                                                             th:src="${site.userDefaultAvatar()}" alt="profile-pic" src="">
+                                                        <input class="file-upload" type="file" id="avatar-file"
+                                                               data-hidden="avatar-hidden" data-img="avatar-img"
+                                                               accept="image/*">
+                                                        <input type="hidden" class="form-control" id="avatar-hidden"
+                                                               th:value="${site.userDefaultAvatar()}" name="user_default_avatar" required>
+                                                    </div>
+                                                    <div class="form-group col-sm-12">
                                                         <label>站点favicon:</label>
                                                         <img style="border-radius: 3px;margin-left: 10px;cursor: pointer;"
                                                              data-input="favicon-file" id="favicon-img"
@@ -91,19 +103,19 @@
                                                         <label>允许用户上传头像大小:</label>
                                                         <input class="form-control" name="avatar_size" required
                                                                type="text"
-                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Size).BTrim.convert(site.avatarSize())}">
+                                                               th:value="${site.avatarSize()}">
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>用户默认空间大小:</label>
                                                         <input class="form-control" name="default_max_size" required
                                                                type="text"
-                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Size).BTrim.convert(site.defaultMaxSize())}">
+                                                               th:value="${site.defaultMaxSize()}">
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label>用户上传大小限制:</label>
                                                         <input class="form-control" name="upload_limit" required
                                                                type="text"
-                                                               th:value="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Size).BTrim.convert(site.uploadLimit())}">
+                                                               th:value="${site.uploadLimit()}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -141,6 +153,8 @@
                     if (res.success) {
                         $(`#${$(this).data('hidden')}`).val(res.data)
                         $(`#${$(this).data('img')}`).attr('src', res.data)
+                    } else {
+                        cocoMessage.error(res.message)
                     }
                 }
             })

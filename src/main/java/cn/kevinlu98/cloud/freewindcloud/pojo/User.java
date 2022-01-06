@@ -38,8 +38,8 @@ public class User {
 
     private String email;
     @Column(nullable = false)
-    private Long size;
+    private String size;
 
-    @Column(nullable = false, columnDefinition = "0")
-    private Long limitSize;
+    @Column(nullable = false)
+    private String limitSize;
 }

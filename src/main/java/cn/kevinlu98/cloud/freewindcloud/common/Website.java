@@ -70,6 +70,11 @@ public class Website {
         return getValue(Site.SITE_UPLOAD_LIMIT);
     }
 
+    @Cacheable(key = "targetClass + methodName")
+    public String userDefaultAvatar() {
+        return getValue(Site.SITE_USER_DEFAULT_AVATAR);
+    }
+
     public String getValue(Site site) {
         Optional<Option> option = optionMapper.findById(site.getId());
         Option siteOpt = option.orElse(null);

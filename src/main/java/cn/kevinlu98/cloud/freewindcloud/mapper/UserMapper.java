@@ -15,6 +15,8 @@ public interface UserMapper extends JpaRepository<User, Long> {
 
     Integer countByEmail(String email);
 
+    Integer countByUsername(String username);
+
     User findUserByUsername(String username);
 
 }

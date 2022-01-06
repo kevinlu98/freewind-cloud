@@ -44,15 +44,7 @@ public class SiteController {
     @CacheEvict(value = {"site_config"}, allEntries = true)
     @PostMapping("/save")
     public String save(HttpServletRequest request) {
-        Map<String, String> siteItems = new HashMap<>();
-        request.getParameterMap().forEach((k, v) -> siteItems.put(k, v[0]));
-        long avatarSize = (long) Size.convertBase(siteItems.get("avatar_size"));
-        siteItems.put("avatar_size", avatarSize + "");
-        long defaultMaxSize = (long) Size.convertBase(siteItems.get("default_max_size"));
-        siteItems.put("default_max_size", defaultMaxSize + "");
-        long uploadLimit = (long) Size.convertBase(siteItems.get("upload_limit"));
-        siteItems.put("upload_limit", uploadLimit + "");
-        siteItems.forEach((k, v) -> optionService.update(k, v));
+        request.getParameterMap().forEach((k, v) -> optionService.update(k, v[0]));
         return RedirectUtils.redirectSuccess("/site/","站点设置保存成功");
     }
 

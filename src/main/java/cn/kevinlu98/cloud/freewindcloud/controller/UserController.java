@@ -6,6 +6,7 @@ import cn.kevinlu98.cloud.freewindcloud.common.enums.Size;
 import cn.kevinlu98.cloud.freewindcloud.pojo.User;
 import cn.kevinlu98.cloud.freewindcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,9 +50,51 @@ public class UserController {
         return "user/index";
     }
 
-    @GetMapping("/list")
-    public String list(Model model) {
+    @GetMapping("/add")
+    public String add(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, Model model) {
+        if (!StringUtils.isEmptyOrWhitespace(msgType)) {
+            MessageUtils.msg(model, msgType, message);
+        }
+        return "user/add";
+    }
 
+    @GetMapping("/edit/{id}")
+    public String edit(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, @PathVariable long id, Model model) {
+        if (!StringUtils.isEmptyOrWhitespace(msgType)) {
+            MessageUtils.msg(model, msgType, message);
+        }
+        User user = userService.find(id);
+        if (user == null) {
+            return RedirectUtils.redirectError("/user/list", "id为[" + id + "]的用户不存在");
+        }
+        model.addAttribute("user", user);
+        return "user/edit";
+    }
+
+    @PostMapping("/add")
+    public String add(User user) {
+        user.setAvatar(website.userDefaultAvatar());
+        if (userService.existsEmail(user.getEmail())) {
+            return RedirectUtils.redirectError("/user/add", "邮箱" + user.getEmail() + "已存在");
+        }
+        if (userService.existsUsername(user.getUsername())) {
+            return RedirectUtils.redirectError("/user/add", "用户名" + user.getUsername() + "已存在");
+        }
+        user.setPassword(Passwd.md5(user.getUsername()));
+        userService.save(user);
+        return RedirectUtils.redirectSuccess("/user/add", "新增用户成功");
+    }
+
+    @GetMapping("/list")
+    public String list(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, Integer page, Integer size, Model model) {
+        if (!StringUtils.isEmptyOrWhitespace(msgType)) {
+            MessageUtils.msg(model, msgType, message);
+        }
+        page = page == null ? 1 : page;
+        size = size == null ? 10 : size;
+        Page<User> usersPage = userService.listUser(page, size);
+        FWPage<User> users = new FWPage<>(page, usersPage.getTotalPages(), usersPage.getTotalElements(), usersPage.getContent());
+        model.addAttribute("userPage", users);
         return "user/list";
     }
 
@@ -89,7 +132,7 @@ public class UserController {
         user.setAvatar(avatar);
         user.setNickname(nickname);
         if (!StringUtils.equals(email, loginUser.getEmail())) {
-            if (userService.exists(email)) {
+            if (userService.existsEmail(email)) {
                 return RedirectUtils.redirectError("/user/", "邮箱已存在");
             }
             user.setEmail(email);
@@ -116,8 +159,8 @@ public class UserController {
         if (file.isEmpty()) {
             return FWResult.fail("文件上传失败，请选择文件");
         }
-        if (file.getSize() > Long.parseLong(website.avatarSize())) {
-            return FWResult.fail("文件上传失败，请上传" + Size.BTrim.convert(Long.parseLong(website.avatarSize())) + "之内的图片");
+        if (file.getSize() > Size.convertBase(website.avatarSize())) {
+            return FWResult.fail("文件上传失败，请上传" + website.avatarSize() + "之内的图片");
         }
         return FileUtils.uploadImg(file, authentication.getName());
     }

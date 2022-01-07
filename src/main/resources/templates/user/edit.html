@@ -41,7 +41,7 @@
                                                     <div class="form-group col-sm-12">
                                                         <label for="nickname">昵称:</label>
                                                         <input type="text" class="form-control" id="nickname" required
-                                                               th:value="${user.nickname}"
+                                                               th:value="${user.nickname}" disabled
                                                                name="nickname">
                                                     </div>
                                                     <div class="form-group col-sm-12">
@@ -55,7 +55,7 @@
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label for="email">邮箱:</label>
-                                                        <input type="email" class="form-control" id="email" name="email" th:value="${user.email}"
+                                                        <input type="email" class="form-control" id="email" disabled th:value="${user.email}"
                                                                required>
                                                     </div>
                                                     <div class="form-group col-sm-12">

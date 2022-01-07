@@ -19,6 +19,8 @@
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.css}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" />
+    <link rel="stylesheet" th:href="@{/static/vendor/syalert/syalert.min.css}">
 </head>
 <body>
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
@@ -242,6 +244,7 @@
     <script th:src="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.js}"></script>
     <script th:src="@{/static/js/doc-viewer.js}"></script>
     <script th:src="@{/static/js/app.js}"></script>
+    <script th:src="@{/static/vendor/syalert/syalert.min.js}"></script>
     <script src="https://unpkg.com/coco-message/coco-message.min.js"></script>
 </div>
 <div th:fragment="message" th:if="${msgType}"

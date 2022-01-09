@@ -218,7 +218,7 @@ public enum Size {
     }
 
     public static float convertBase(String size) {
-        String pattern = "\\D+";
+        String pattern = "[a-zA-z]+";
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(size);
         if (matcher.find()) {
@@ -227,7 +227,7 @@ public enum Size {
                 unit += "B";
             }
             Float un = unitMap.get(unit.toUpperCase());
-            long sizeL = Long.parseLong(size.replaceAll("\\D", ""));
+            Float sizeL = Float.parseFloat(size.replaceAll("[a-zA-z]", ""));
             return sizeL * un;
         }
         return 0f;

@@ -11,7 +11,7 @@
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
 <div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
 
-    <div th:replace="common::sidebar"></div>
+    <div th:replace="common::sidebar('user')"></div>
     <div th:replace="common::navbar"></div>
 
     <div class="content-page">
@@ -48,7 +48,7 @@
                                                         <label for="role">权限:</label>
                                                         <select name="role" id="role" class="form-control" required>
                                                             <option th:each="role:${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).values()}"
-                                                                    th:selected="${role.value==user.role?'selected':''}"
+                                                                    th:selected="${role.value==user.role}"
                                                                     th:value="${role.value}"
                                                                     th:text="${role.desc}"></option>
                                                         </select>

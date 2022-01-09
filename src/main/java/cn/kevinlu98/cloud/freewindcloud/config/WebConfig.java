@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 public class WebConfig implements WebMvcConfigurer {
 
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
@@ -48,4 +49,5 @@ public class WebConfig implements WebMvcConfigurer {
         messageSource.addBasenames("classpath:org/springframework/security/messages");
         return messageSource;
     }
+
 }

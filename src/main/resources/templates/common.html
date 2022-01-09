@@ -17,14 +17,13 @@
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/PPTXjs/css/pptxjs.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/PPTXjs/css/nv.d3.min.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/SheetJS/handsontable.full.min.css}">
-    <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css}">
+    <link rel="stylesheet"
+          th:href="@{/static/vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css}">
     <link rel="stylesheet" th:href="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.css}">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" />
-    <link rel="stylesheet" th:href="@{/static/vendor/syalert/syalert.min.css}">
 </head>
 <body>
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
-<div class="iq-sidebar  sidebar-default " th:fragment="sidebar">
+<div class="iq-sidebar  sidebar-default " th:fragment="sidebar(current)">
     <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
         <a th:href="@{/}" class="header-logo">
             <img th:src="${site.logoBlank()}" class="img-fluid rounded-normal light-logo" alt="logo" src="">
@@ -37,20 +36,26 @@
     <div class="data-scrollbar" data-scroll="1">
         <nav class="iq-sidebar-menu">
             <ul id="iq-sidebar-toggle" class="iq-menu">
-                <li class="active">
+                <li th:class="${current=='index'?'active':''}">
                     <a th:href="@{/}" class="">
                         <i class="las la-home iq-arrow-left"></i><span>控制台</span>
                     </a>
                 </li>
-                <li class=""
+                <li th:class="${current=='user'?'active':''}"
                     th:if="${loginUser.role==T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.value}">
                     <a th:href="@{/user/list}" class="">
                         <i class="las la-user iq-arrow-left"></i><span>用户管理</span>
                     </a>
                 </li>
-                <li class=" ">
-                    <a href="#" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                        <i class="las la-hdd"></i><span>我的云盘</span>
+                <li th:class="${current=='driver'?'active':''}"
+                    th:if="${loginUser.role==T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.value}">
+                    <a th:href="@{/driver/}">
+                        <i class="las la-hdd"></i><span>云盘管理</span>
+                    </a>
+                </li>
+                <li th:class="${current=='cloud'?'active':''}">
+                    <a th:href="@{/cloud/}">
+                        <i class="las la-file"></i><span>我的文件</span>
                     </a>
                 </li>
                 <li class=" ">
@@ -77,12 +82,12 @@
         </nav>
         <div class="sidebar-bottom">
             <h4 class="mb-3"><i class="las la-cloud mr-2"></i>容量</h4>
-            <p>17.1 / 20 GB 使用</p>
+            <p th:text="${site.usedSize() + ' / ' + loginUser.size}">17.1 / 20 GB 使用</p>
             <div class="iq-progress-bar mb-3">
-                      <span class="bg-primary iq-progress progress-1" data-percent="67">
+                      <span class="bg-primary iq-progress progress-1" th:attr="data-percent=${site.percent()}">
                       </span>
             </div>
-            <p>75% 已用 - 3.9 GB 空闲</p>
+            <p th:text="${site.percent()+'% 已用 - '+ site.freeSize() +'空闲'}">75% 已用 - 3.9 GB 空闲</p>
             <a href="#" class="btn btn-outline-primary view-more mt-4 disabled">购买容量</a>
         </div>
         <div class="p-3"></div>
@@ -244,8 +249,7 @@
     <script th:src="@{/static/vendor/doc-viewer/include/officeToHtml/officeToHtml.js}"></script>
     <script th:src="@{/static/js/doc-viewer.js}"></script>
     <script th:src="@{/static/js/app.js}"></script>
-    <script th:src="@{/static/vendor/syalert/syalert.min.js}"></script>
-    <script src="https://unpkg.com/coco-message/coco-message.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/layer/3.5.1/layer.min.js"></script>
 </div>
 <div th:fragment="message" th:if="${msgType}"
      th:class="${'alert text-white bg-'+ (msgType=='success'?'success':'danger')}"

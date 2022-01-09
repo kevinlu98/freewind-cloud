@@ -11,7 +11,7 @@
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
 <div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
 
-    <div th:replace="common::sidebar"></div>
+    <div th:replace="common::sidebar('index')"></div>
     <div th:replace="common::navbar"></div>
 
     <div class="content-page">

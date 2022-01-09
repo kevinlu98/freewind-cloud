@@ -7,6 +7,7 @@ import cn.kevinlu98.cloud.freewindcloud.pojo.User;
 import cn.kevinlu98.cloud.freewindcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,6 +51,55 @@ public class UserController {
         return "user/index";
     }
 
+    @PreAuthorize("hasRole('admin')")
+    @ResponseBody
+    @PostMapping("/reset/password")
+    public FWResult<String> rePassword(Long id) {
+        User loginUser = website.loginUser();
+        if (Objects.equals(loginUser.getId(), id)) {
+            return FWResult.fail("请去个人中心对自己账号完成操作");
+        }
+        userService.repwd(id);
+        return FWResult.success("密码重置成功");
+    }
+
+    @PreAuthorize("hasRole('admin')")
+    @ResponseBody
+    @PostMapping("/reset/avatar")
+    public FWResult<String> reAvatar(Long id) {
+        User loginUser = website.loginUser();
+        if (Objects.equals(loginUser.getId(), id)) {
+            return FWResult.fail("请去个人中心对自己账号完成操作");
+        }
+        userService.reAvatar(id);
+        return FWResult.success("密码头像成功");
+    }
+
+    @PreAuthorize("hasRole('admin')")
+    @ResponseBody
+    @PostMapping("/reset/nickname")
+    public FWResult<String> reNickname(Long id) {
+        User loginUser = website.loginUser();
+        if (Objects.equals(loginUser.getId(), id)) {
+            return FWResult.fail("请去个人中心对自己账号完成操作");
+        }
+        userService.reNickname(id);
+        return FWResult.success("密码昵称成功");
+    }
+
+    @PreAuthorize("hasRole('admin')")
+    @ResponseBody
+    @PostMapping("/reset/delete")
+    public FWResult<String> delete(Long id) {
+        User loginUser = website.loginUser();
+        if (Objects.equals(loginUser.getId(), id)) {
+            return FWResult.fail("不能删除自已的账号哦");
+        }
+        userService.delete(id);
+        return FWResult.success("删除用户成功");
+    }
+
+    @PreAuthorize("hasRole('admin')")
     @GetMapping("/add")
     public String add(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, Model model) {
         if (!StringUtils.isEmptyOrWhitespace(msgType)) {
@@ -58,6 +108,7 @@ public class UserController {
         return "user/add";
     }
 
+    @PreAuthorize("hasRole('admin')")
     @GetMapping("/edit/{id}")
     public String edit(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, @PathVariable long id, Model model) {
         if (!StringUtils.isEmptyOrWhitespace(msgType)) {
@@ -71,6 +122,18 @@ public class UserController {
         return "user/edit";
     }
 
+    @PreAuthorize("hasRole('admin')")
+    @PostMapping("/edit/{id}")
+    public String editUser(@PathVariable long id, User user, Model model) {
+        User loginUser = website.loginUser();
+        if (loginUser.getId().equals(id)) {
+            return RedirectUtils.redirectError("/user/edit/" + id, "请去个人中心对自己账号完成操作");
+        }
+        userService.save(user);
+        return RedirectUtils.redirectSuccess("/user/edit/" + id, "保存成功");
+    }
+
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/add")
     public String add(User user) {
         user.setAvatar(website.userDefaultAvatar());
@@ -85,16 +148,18 @@ public class UserController {
         return RedirectUtils.redirectSuccess("/user/add", "新增用户成功");
     }
 
+    @PreAuthorize("hasRole('admin')")
     @GetMapping("/list")
-    public String list(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, Integer page, Integer size, Model model) {
+    public String list(@RequestParam(name = "msgType", defaultValue = "") String msgType, @RequestParam(name = "message", defaultValue = "") String message, @RequestParam(value = "keyword", defaultValue = "") String keyword, Integer page, Integer size, Model model) {
         if (!StringUtils.isEmptyOrWhitespace(msgType)) {
             MessageUtils.msg(model, msgType, message);
         }
         page = page == null ? 1 : page;
         size = size == null ? 10 : size;
-        Page<User> usersPage = userService.listUser(page, size);
+        Page<User> usersPage = userService.listUser(keyword, page, size);
         FWPage<User> users = new FWPage<>(page, usersPage.getTotalPages(), usersPage.getTotalElements(), usersPage.getContent());
         model.addAttribute("userPage", users);
+        model.addAttribute("keyword", keyword);
         return "user/list";
     }
 
@@ -121,13 +186,15 @@ public class UserController {
 
 
     @PostMapping("/save")
-    public String save(String username, String nickname, String email, String avatar, Model model) {
+    public String save(String username, String nickname, String email, String avatar, String size, String limitSize) {
         User user = new User();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loginUser = ((SecurityUser) authentication.getPrincipal()).getLoginUser();
         user.setId(loginUser.getId());
         if (Objects.equals(loginUser.getRole(), Role.ROLE_ADMIN.getValue())) {
             user.setUsername(username);
+            user.setSize(size);
+            user.setLimitSize(limitSize);
         }
         user.setAvatar(avatar);
         user.setNickname(nickname);
@@ -162,6 +229,6 @@ public class UserController {
         if (file.getSize() > Size.convertBase(website.avatarSize())) {
             return FWResult.fail("文件上传失败，请上传" + website.avatarSize() + "之内的图片");
         }
-        return FileUtils.uploadImg(file, authentication.getName());
+        return FileUploadUtils.uploadImg(file, authentication.getName());
     }
 }

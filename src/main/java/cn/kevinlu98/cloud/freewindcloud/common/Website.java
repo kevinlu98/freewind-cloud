@@ -1,12 +1,21 @@
 package cn.kevinlu98.cloud.freewindcloud.common;
 
+import cn.kevinlu98.cloud.freewindcloud.common.enums.DriverType;
 import cn.kevinlu98.cloud.freewindcloud.common.enums.Site;
+import cn.kevinlu98.cloud.freewindcloud.common.enums.Size;
+import cn.kevinlu98.cloud.freewindcloud.exception.NoDriverTypeException;
 import cn.kevinlu98.cloud.freewindcloud.mapper.OptionMapper;
+import cn.kevinlu98.cloud.freewindcloud.pojo.Driver;
 import cn.kevinlu98.cloud.freewindcloud.pojo.Option;
+import cn.kevinlu98.cloud.freewindcloud.pojo.User;
+import cn.kevinlu98.cloud.freewindcloud.service.CloudService;
+import cn.kevinlu98.cloud.freewindcloud.service.DriverService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -24,6 +33,10 @@ public class Website {
 
     @Autowired
     private OptionMapper optionMapper;
+
+    @Autowired
+    private DriverService driverService;
+
 
     @Cacheable(key = "targetClass + methodName")
     public String title() {
@@ -73,6 +86,30 @@ public class Website {
     @Cacheable(key = "targetClass + methodName")
     public String userDefaultAvatar() {
         return getValue(Site.SITE_USER_DEFAULT_AVATAR);
+    }
+
+    public User loginUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ((SecurityUser) authentication.getPrincipal()).getLoginUser();
+    }
+
+    public String usedSize() throws NoDriverTypeException {
+        Driver driver = driverService.activeDriver();
+        CloudService cloudService = CloudService.getInstance(DriverType.find(driver.getType()));
+        return cloudService.usedSize(driver.getPath(), loginUser());
+    }
+
+    public int percent() throws NoDriverTypeException {
+        float u = Size.convertBase(usedSize());
+        float t = Size.convertBase(loginUser().getSize());
+        return ((int) (u * 100 / t));
+    }
+
+
+    public String freeSize() throws NoDriverTypeException {
+        float u = Size.convertBase(usedSize());
+        float t = Size.convertBase(loginUser().getSize());
+        return Size.BTrim.convert(t-u);
     }
 
     public String getValue(Site site) {

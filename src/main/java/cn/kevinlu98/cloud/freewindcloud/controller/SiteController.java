@@ -1,9 +1,7 @@
 package cn.kevinlu98.cloud.freewindcloud.controller;
 
 import cn.kevinlu98.cloud.freewindcloud.common.*;
-import cn.kevinlu98.cloud.freewindcloud.common.enums.Size;
 import cn.kevinlu98.cloud.freewindcloud.service.OptionService;
-import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
@@ -13,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -45,7 +42,7 @@ public class SiteController {
     @PostMapping("/save")
     public String save(HttpServletRequest request) {
         request.getParameterMap().forEach((k, v) -> optionService.update(k, v[0]));
-        return RedirectUtils.redirectSuccess("/site/","站点设置保存成功");
+        return RedirectUtils.redirectSuccess("/site/", "站点设置保存成功");
     }
 
     @ResponseBody
@@ -55,6 +52,6 @@ public class SiteController {
         String filename = df.format(new Date());
         filename += Passwd.rdmPass(8);
         System.out.println(filename);
-        return FileUtils.uploadImg(file, filename);
+        return FileUploadUtils.uploadImg(file, filename);
     }
 }

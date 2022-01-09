@@ -29,4 +29,8 @@ public enum Role {
         List<Role> roles = Arrays.stream(Role.values()).filter(x -> x.value.equals(value)).collect(Collectors.toList());
         return roles.size() > 0 ? roles.get(0) : Role.ROLE_ADMIN;
     }
+
+    public String role() {
+        return "ROLE_" + this.name;
+    }
 }

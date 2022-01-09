@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
+<head th:replace="common::head"></head>
+
+<body>
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<div class="wrapper">
+    <div class="container">
+        <div class="row no-gutters height-self-center">
+            <div class="col-sm-12 text-center align-self-center">
+                <div class="iq-error position-relative">
+                    <img th:src="@{/static/images/error/403.png}" class="img-fluid iq-error-img" alt="">
+                    <h2 class="mb-0 mt-4">权限不足</h2>
+                    <p>您的权限好像不被允许请求的该页面</p>
+                    <a class="btn btn-primary d-inline-flex align-items-center mt-3" th:href="@{/}"><i
+                            class="ri-home-4-line"></i>返回首页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Wrapper End-->
+<div th:replace="common::footer"></div>
+<div th:include="common::script"></div>
+<div th:replace="common::modal"></div>
+</body>
+</html>

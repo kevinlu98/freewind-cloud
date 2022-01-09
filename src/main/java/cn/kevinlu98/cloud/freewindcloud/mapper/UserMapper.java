@@ -2,6 +2,7 @@ package cn.kevinlu98.cloud.freewindcloud.mapper;
 
 import cn.kevinlu98.cloud.freewindcloud.pojo.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * Author: 鲁恺文
@@ -9,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Email: lukaiwen@xiaomi.com
  * Description:
  */
-public interface UserMapper extends JpaRepository<User, Long> {
+public interface UserMapper extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
     Integer countByRole(Integer role);
 
@@ -18,5 +19,6 @@ public interface UserMapper extends JpaRepository<User, Long> {
     Integer countByUsername(String username);
 
     User findUserByUsername(String username);
+
 
 }

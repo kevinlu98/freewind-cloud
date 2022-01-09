@@ -11,7 +11,7 @@
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
 <div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
 
-    <div th:replace="common::sidebar"></div>
+    <div th:replace="common::sidebar('index')"></div>
     <div th:replace="common::navbar"></div>
 
     <div class="content-page">
@@ -95,12 +95,24 @@
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label for="size">我的容量:</label>
-                                                        <input type="email" class="form-control" id="size" disabled
+                                                        <input type="text" class="form-control" id="size"
+                                                               th:if="${loginUser.role == T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}"
+                                                               name="size"
+                                                               th:value="${loginUser.size}">
+                                                        <input type="text" class="form-control" id="size"
+                                                               th:if="${loginUser.role != T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}"
+                                                               disabled
                                                                th:value="${loginUser.size}">
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <label for="limit">上传限制:</label>
-                                                        <input type="email" class="form-control" id="limit" disabled
+                                                        <input type="text" class="form-control" id="limit"
+                                                               th:if="${loginUser.role == T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}"
+                                                               name="limitSize"
+                                                               th:value="${loginUser.limitSize}">
+                                                        <input type="text" class="form-control" id="limit"
+                                                               th:if="${loginUser.role != T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).ROLE_ADMIN.getValue()}"
+                                                               disabled
                                                                th:value="${loginUser.limitSize}">
                                                     </div>
                                                 </div>
@@ -175,8 +187,8 @@
                     if (res.success) {
                         $("#avatar-show").attr("src", res.data)
                         $("#avatar-hidden").val(res.data)
-                    }else{
-                        cocoMessage.error(res.message)
+                    } else {
+                        layer.msg(res.message, {icon: 2})
                     }
                 }
             })

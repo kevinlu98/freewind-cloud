@@ -1,9 +1,11 @@
 package cn.kevinlu98.cloud.freewindcloud.config;
 
 import cn.kevinlu98.cloud.freewindcloud.common.Passwd;
+import cn.kevinlu98.cloud.freewindcloud.common.enums.Role;
 import cn.kevinlu98.cloud.freewindcloud.service.FwUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
@@ -22,6 +24,7 @@ import java.nio.charset.StandardCharsets;
  * Description:
  */
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private FwUserDetailService userDetailService;
@@ -32,6 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/static/**").permitAll()
                 .antMatchers("/uploads/**").permitAll()
+                .antMatchers("/404").permitAll()
+                .antMatchers("/500").permitAll()
+                .antMatchers("/403").permitAll()
+                .antMatchers("/site/**").hasRole(Role.ROLE_ADMIN.getName())
+                .antMatchers("/site**").hasRole(Role.ROLE_ADMIN.getName())
+                .antMatchers("/driver**").hasRole(Role.ROLE_ADMIN.getName())
+                .antMatchers("/driver/**").hasRole(Role.ROLE_ADMIN.getName())
                 .anyRequest().authenticated();
 
         http.formLogin()

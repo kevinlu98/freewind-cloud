@@ -11,7 +11,7 @@
 <!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
 <div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
 
-    <div th:replace="common::sidebar('user')"></div>
+    <div th:replace="common::sidebar('driver')"></div>
     <div th:replace="common::navbar"></div>
 
     <div class="content-page">
@@ -25,51 +25,41 @@
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between">
                                         <div class="iq-header-title">
-                                            <h4 class="card-title">新增用户</h4>
+                                            <h4 class="card-title">新增云盘</h4>
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <form th:action="@{/user/add}" method="post">
+                                        <form th:action="@{/driver/add}" method="post">
                                             <div class=" row align-items-center">
                                                 <div class="col-sm-6">
                                                     <div class="form-group col-sm-12">
-                                                        <label for="username">用户名:</label>
-                                                        <input type="text" class="form-control" id="username"
-                                                               name="username" required>
+                                                        <label for="name">云盘名称:</label>
+                                                        <input type="text" class="form-control" id="name"
+                                                               name="name" required>
                                                     </div>
                                                     <div class="form-group col-sm-12">
-                                                        <label for="nickname">昵称:</label>
-                                                        <input type="text" class="form-control" id="nickname" required
-                                                               name="nickname">
-                                                    </div>
-                                                    <div class="form-group col-sm-12">
-                                                        <label for="role">权限:</label>
-                                                        <select name="role" id="role" class="form-control" required>
-                                                            <option th:each="role:${T(cn.kevinlu98.cloud.freewindcloud.common.enums.Role).values()}"
-                                                                    th:selected="${role.value==2}"
-                                                                    th:value="${role.value}"
-                                                                    th:text="${role.desc}"></option>
+                                                        <label for="type">云盘类型:</label>
+                                                        <select name="type" id="type" class="form-control" required>
+                                                            <option th:each="type:${T(cn.kevinlu98.cloud.freewindcloud.common.enums.DriverType).values()}"
+                                                                    th:selected="${type.value==1}"
+                                                                    th:value="${type.value}"
+                                                                    th:text="${type.desc}"></option>
                                                         </select>
                                                     </div>
                                                     <div class="form-group col-sm-12">
-                                                        <label for="email">邮箱:</label>
-                                                        <input type="email" class="form-control" id="email" name="email"
-                                                               required>
+                                                        <label for="path">云盘路径:</label>
+                                                        <input type="text" class="form-control" id="path"
+                                                               name="path" required>
+                                                        <p>本地云盘的路径一定为程序可读写的路径</p>
+                                                    </div>
+
+                                                    <div class="form-group col-sm-12">
+                                                        <label for="size">最大容量:</label>
+                                                        <input type="text" class="form-control" id="size" required
+                                                               name="maxSize">
                                                     </div>
                                                     <div class="form-group col-sm-12">
-                                                        <label for="size">容量:</label>
-                                                        <input type="text" class="form-control" id="size"
-                                                               name="size"
-                                                               th:value="${site.defaultMaxSize()}">
-                                                    </div>
-                                                    <div class="form-group col-sm-12">
-                                                        <label for="limit">上传限制:</label>
-                                                        <input type="text" class="form-control" id="limit"
-                                                               name="limitSize"
-                                                               th:value="${site.uploadLimit()}">
-                                                    </div>
-                                                    <div class="form-group col-sm-12">
-                                                        <a th:href="@{/user/list}" class="btn btn-primary mr-2">返回</a>
+                                                        <a th:href="@{/driver/}" class="btn btn-primary mr-2">返回</a>
                                                         <button type="submit" class="btn btn-success mr-2">保存</button>
                                                     </div>
                                                 </div>

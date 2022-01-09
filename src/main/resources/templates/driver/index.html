@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<!--/*@thymesVar id="site" type="cn.kevinlu98.cloud.freewindcloud.common.Website"*/-->
+<head th:replace="common::head"></head>
+
+<body>
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!--/*@thymesVar id="loginUser" type="cn.kevinlu98.cloud.freewindcloud.pojo.User"*/-->
+<div class="wrapper" th:with="loginUser=${#authentication.principal.loginUser}">
+
+    <div th:replace="common::sidebar('driver')"></div>
+    <div th:replace="common::navbar"></div>
+
+    <div class="content-page">
+        <div class="container-fluid">
+            <div th:replace="common::message"></div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">云盘管理</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6">
+                                    <a class="btn btn-success" th:href="@{/driver/add}">
+                                        <i class="fa fa-plus"></i> 新增云盘</a>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="user-list-table" class="table table-striped table-bordered mt-4 " role="grid"
+                                       aria-describedby="user-list-page-info">
+                                    <thead>
+                                    <tr>
+                                        <th>云盘名称</th>
+                                        <th>云盘类型</th>
+                                        <th>云盘路径</th>
+                                        <th>激活</th>
+                                        <th>最大容量</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="driver:${drivers}">
+                                        <td th:text="${driver.name}"></td>
+                                        <td th:text="${T(cn.kevinlu98.cloud.freewindcloud.common.enums.DriverType).find(driver.type).desc}"></td>
+                                        <td th:text="${driver.path}"></td>
+                                        <td>
+                                            <a th:if="${driver.isDefalut==1}"
+                                               th:href="@{/driver/active/{id}/{active}(id=${driver.id},active=1)}"
+                                               class="mt-2 badge badge-pill badge-success">激活</a>
+                                            <a th:if="${driver.isDefalut!=1}"
+                                               th:href="@{/driver/active/{id}/{active}(id=${driver.id},active=2)}"
+                                               class="mt-2 badge badge-pill badge-secondary">不激活</a>
+                                        </td>
+                                        <td th:text="${driver.maxSize}"></td>
+                                        <td>
+                                            <a th:href="@{/driver/delete}" class="btn delete-btn btn-sm btn-danger"><i
+                                                    class="fa fa-trash"></i> 删除
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row justify-content-between mt-3">
+                                <div id="user-list-page-info" class="col-md-6">
+                                    <span>共 <b th:text="${drivers.size()}"></b> 条记录</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Wrapper End-->
+<div th:replace="common::footer"></div>
+<div th:include="common::script"></div>
+<div th:replace="common::modal"></div>
+<script>
+    $(".delete-btn").on('click', function () {
+
+        let del = false;
+
+        let idx = layer.confirm("确认要删除该云盘吗？", function () {
+            del = true;
+            layer.close(idx);
+        })
+        console.log(del);
+        return del;
+    })
+</script>
+</body>
+</html>

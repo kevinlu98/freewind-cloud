@@ -98,7 +98,8 @@
                                                 class="ri-share-fill mr-2"></i>分享</a>
                                         <a class="dropdown-item" href="#"><i
                                                 class="ri-drag-move-fill mr-2"></i>移动</a>
-                                        <a th:if="${!file.dir}" class="dropdown-item" th:href="@{/cloud/download(path=${T(cn.kevinlu98.cloud.freewindcloud.common.DesUtils).encryption(file.absPath)})}"><i
+                                        <a th:if="${!file.dir}" class="dropdown-item"
+                                           th:href="@{/cloud/download(path=${T(cn.kevinlu98.cloud.freewindcloud.common.DesUtils).encryption(file.absPath)})}"><i
                                                 class="ri-file-download-fill mr-2"></i>下载</a>
                                         <a class="dropdown-item" href="#"><i
                                                 class="ri-edit-2-fill mr-2"></i>重命名</a>
@@ -321,6 +322,20 @@
                                     layer.msg(res.message, {icon: 2})
                                     breakFlag = true;
                                 }
+                            },
+                            xhr: () => {
+                                let xhr = $.ajaxSettings.xhr();
+                                if (xhr.upload) {
+                                    xhr.upload.addEventListener("progress", progressHandle,
+                                        false);
+                                    // //加载完成的事件
+                                    // xhr.addEventListener("load", (e)=>{
+                                    //
+                                    // }, false);
+                                    // //加载出错的事件
+                                    // xhr.addEventListener("error", failedHandle, false);
+                                    return xhr;
+                                }
                             }
                         })
                         if (breakFlag) {
@@ -340,6 +355,10 @@
                 layer.close(idx)
             }
         })
+
+        let progressHandle = function (e) {
+            console.log(e);
+        }
 
         function updateList() {
             let html = "";

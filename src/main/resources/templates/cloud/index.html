@@ -33,10 +33,8 @@
                 <div class="col-lg-12">
                     <div class="d-flex align-items-center justify-content-between welcome-content mb-3">
                         <h4>我的文件
-                            <button class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl"><i
-                                    class="fa fa-upload"></i>上传
-                            </button>
-                            <button class="btn btn-secondary">新建文件夹</button>
+                            <button class="btn btn-primary" id="open-upload-btn"><i class="fa fa-upload"></i>上传</button>
+                            <button class="btn btn-secondary" id="mkdir-btn">新建文件夹</button>
                         </h4>
                         <div class="d-flex align-items-center">
                             <div class="list-grid-toggle mr-4" id="replace-btn">
@@ -179,89 +177,52 @@
         </div>
     </div>
 </div>
-<div class="modal fade bd-example-modal-xl" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">上传文件</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card-body">
-                    <input type="hidden" id="upload-path" th:value="${uploadPath}">
-                    <button type="button" id="upload-files-btn" class="btn btn-primary mt-2"><i class="fa fa-plus"></i>
-                        上传文件
-                    </button>
-                    <input style="display: none" id="upload-files" multiple type="file">
-                    <button type="button" id="upload-dir-btn" class="btn btn-primary mt-2"><i class="fa fa-plus"></i>
-                        上传文件夹
-                    </button>
-                    <input style="display: none" id="upload-dir" webkitdirectory type="file">
-                    <button type="button" id="start-upload" class="btn btn-success mt-2"><i class="fa fa-upload"></i>
-                        开始上传
-                    </button>
-                </div>
-                <div class="card-body">
-                    <h5 class="modal-title">总进度</h5>
-                    <div class="progress mb-3">
-                        <div class="progress-bar bg-success" id="file-prograss" role="progressbar" aria-valuenow="0"
-                             aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <div class="alert text-white bg-primary" role="alert">
-                        <div class="iq-alert-text" id="upload-result">上传结果</div>
-                    </div>
-                    <table id="user-list-table" class="table table-striped table-bordered mt-4 " role="grid"
-                           aria-describedby="user-list-page-info">
-                        <thead>
-                        <tr>
-                            <th>文件名</th>
-                            <th>大小</th>
-                            <th>进度</th>
-                        </tr>
-                        </thead>
-                        <tbody id="file-list-table">
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<div id="upload-files-box" style="display: none">
+    <input type="file" multiple>
+</div>
+<div id="upload-dir-box" style="display: none">
+    <input type="file" webkitdirectory>
 </div>
 <!-- Wrapper End-->
 <div th:replace="common::footer"></div>
 <div th:include="common::script"></div>
 <div th:replace="common::modal"></div>
+<script id="uplado-window" type="text/html">
+    <div style="width: 800px;">
+        <div class="dropdown" style="outline: none!important;">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown"
+                    aria-expanded="false">
+                上传文件
+            </button>
+            <button type="button" class="btn btn-secondary float-right">清空列表</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 100px;min-width: 0">
+                <a class="dropdown-item upload-files-btn" href="javascript:void (0)" style="padding: 5px 10px;">上传文件</a>
+                <a class="dropdown-item upload-dir-btn" href="javascript:void (0)"
+                   style="padding: 5px 10px;">上传目录</a>
+            </div>
+        </div>
+        <div class="mt-3" id="msg-box">
+
+        </div>
+        <div class="row border-bottom mt-3 ml-0 mr-0 shadow-sm">
+            <div class="col-md-6 p-3">文件名</div>
+            <div class="col-md-3 p-3">文件大小</div>
+            <div class="col-md-3 p-3">上传状态</div>
+        </div>
+        <div class="mb-5" style="height: 400px;overflow-y: scroll" id="file-list-body">
+
+        </div>
+    </div>
+</script>
+<input type="hidden" id="upload-path" th:value="${uploadPath}">
+<script th:src="@{/static/js/md5.js}"></script>
 <script>
     $(function () {
-        let uploadFileList = {}
-        $('.list-file').hover(
-            function () {
-                $(this).addClass('bg-primary')
-            },
-            function () {
-                $(this).removeClass('bg-primary')
-            }
-        )
-        $(".file-btn").on('click', function () {
-            location.href = $(this).data('url')
-        })
+        let csrf = $("#spring-csrf");
 
-        $("#replace-btn").on('click', function () {
-            $.get("/cloud/mod?mod=" + $("#current-mod").text());
-        })
-
-        $("#upload-files-btn").on('click', function () {
-            $("#upload-files").click()
-        })
-        $("#upload-dir-btn").on('click', function () {
-            $("#upload-dir").click()
-        })
-
-        function convertSize(limit) {
-            var size = "";
+        function sizeTransform(limit) {
+            let size = "";
             if (limit < 0.1 * 1024) {                            //小于0.1KB，则转化成B
                 size = limit.toFixed(2) + "B"
             } else if (limit < 0.1 * 1024 * 1024) {            //小于0.1MB，则转化成KB
@@ -272,147 +233,178 @@
                 size = (limit / (1024 * 1024 * 1024)).toFixed(2) + "GB"
             }
 
-            var sizeStr = size + "";                        //转成字符串
-            var index = sizeStr.indexOf(".");                    //获取小数点处的索引
-            var dou = sizeStr.substr(index + 1, 2)            //获取小数点后两位的值
+            let sizeStr = size + "";                        //转成字符串
+            let index = sizeStr.indexOf(".");                    //获取小数点处的索引
+            let dou = sizeStr.substr(index + 1, 2)            //获取小数点后两位的值
             if (dou === "00") {                                //判断后两位是否为00，如果是则删除00
                 return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
             }
             return size;
         }
 
-        $("#start-upload").on('click', function () {
-            let keys = Object.keys(uploadFileList);
-            if (keys.length === 0) {
-                layer.msg("未选择上传文件", {icon: 2})
-            } else {
-                let idx = layer.load()
-                let fp = $("#file-prograss")
-                let fpall = keys.length;
-                let fpsucc = 0;
-                let fpfail = 0;
-                for (let i = 0; i < keys.length; i++) {
-                    let pragress = $(`#file-list-table tr:nth-child(${i + 1}) .progress-bar`)
-                    let fileItem = uploadFileList[keys[i]];
-                    let total = fileItem.files.length;
-                    let success = 0;
-                    let breakFlag = false;
-                    for (let j = 0; j < fileItem.files.length; j++) {
-                        let item = fileItem.files[j];
-                        let csrf = $("#spring-csrf");
-                        let formData = new FormData();
-                        formData.append("file", item);
-                        formData.append(csrf.attr("name"), csrf.val())
-                        formData.append('path', $("#upload-path").val())
-                        $.ajax({
-                            url: "/cloud/upload",
-                            type: "post",
-                            dataType: "json",
-                            cache: false,
-                            async: false,
-                            data: formData,
-                            processData: false,// 不处理数据
-                            contentType: false, // 不设置内容类型
-                            success: res => {
-                                if (res.success) {
-                                    success++;
-                                    pragress.stop().animate({'width': `${(success) * 100 / total}%`})
-                                } else {
-                                    fpfail++;
-                                    layer.msg(res.message, {icon: 2})
-                                    breakFlag = true;
-                                }
-                            },
-                            xhr: () => {
-                                let xhr = $.ajaxSettings.xhr();
-                                if (xhr.upload) {
-                                    xhr.upload.addEventListener("progress", progressHandle,
-                                        false);
-                                    // //加载完成的事件
-                                    // xhr.addEventListener("load", (e)=>{
-                                    //
-                                    // }, false);
-                                    // //加载出错的事件
-                                    // xhr.addEventListener("error", failedHandle, false);
-                                    return xhr;
-                                }
-                            }
-                        })
-                        if (breakFlag) {
-                            $(`#file-list-table tr:nth-child(${i + 1})`).css('color', 'red')
-                            break
+        $('.list-file').hover(
+            function () {
+                $(this).addClass('bg-primary')
+            },
+            function () {
+                $(this).removeClass('bg-primary')
+            }
+        )
+
+        $("#replace-btn").on('click', function () {
+            $.get("/cloud/mod?mod=" + $("#current-mod").text());
+        })
+        let fileList = {};
+        $("#open-upload-btn").on('click', function () {
+            let idx = layer.open({
+                title: "上传文件",
+                content: $('#uplado-window').html(),
+                btn: ['开始上传', '取消上传'],
+                yes: function () {
+                    let keys = Object.keys(fileList);
+                    for (let i = 0; i < keys.length; i++) {
+                        let key = keys[i];
+                        if (fileList[key].finish === 0)
+                            doUpload(key, keys)
+                    }
+                },
+                btn2: function () {
+                    layer.close(idx)
+                }
+            })
+        })
+        $("body").on('click', '.upload-files-btn', function () {
+            $("#upload-files-box input[type=file]").click();
+        }).on('click', '.upload-dir-btn', function () {
+            $("#upload-dir-box input[type=file]").click();
+        })
+
+
+        $("#mkdir-btn").on('click', function () {
+            layer.prompt({
+                title: "请输入文件夹的名称",
+            }, function (name) {
+                $.ajax({
+                    url: '/cloud/mkdir',
+                    data: {
+                        name: name,
+                        path: $("#upload-path").val()
+                    },
+                    dataType: 'json',
+                    success: res => {
+                        if (res.success) {
+                            layer.msg("创建成功", {icon: 1}, function () {
+                                location.reload()
+                            })
+                        } else {
+                            layer.msg("创建失败", {icon: 2})
                         }
                     }
-                    if (!breakFlag) {
-                        fpsucc++;
-                    } else {
-                        $.get(`/cloud/rollback?target=${fileItem.name}&path=${$("#upload-path").val()}`)
-                    }
-
-                    fp.stop().animate({'width': `${(fpsucc) * 100 / fpall}%`})
-                }
-                $("#upload-result").text(`上传完成，共${fpsucc}成功，${fpfail}失败`)
-                layer.close(idx)
-            }
+                })
+            })
         })
 
-        let progressHandle = function (e) {
-            console.log(e);
-        }
+        $("#upload-files-box").on('change', "input[type=file]", function () {
+            for (let i = 0; i < this.files.length; i++) {
+                let file = this.files[i]
+                let key = hex_md5(file.name);
+                if (!fileList[key]) {
+                    fileList[key] = file;
+                    fileList[key]['finish'] = 0;
+                }
+            }
+            $("#upload-files-box").html('<input type="file" multiple>')
+            updateList()
+        })
+
+        $("#upload-dir-box").on('change', "input[type=file]", function () {
+            for (let i = 0; i < this.files.length; i++) {
+                let file = this.files[i]
+                let key = hex_md5(file.name);
+                if (!fileList[key]) {
+                    fileList[key] = file;
+                    fileList[key]['finish'] = 0;
+                }
+            }
+            $("#upload-dir-box").html('<input type="file" webkitdirectory>')
+            updateList()
+        })
 
         function updateList() {
-            let html = "";
-            let keys = Object.keys(uploadFileList);
-            console.log(keys);
+            let fileTable = $("#file-list-body")
+            fileTable.html("")
+            let keys = Object.keys(fileList);
             for (let i = 0; i < keys.length; i++) {
-                let fileItem = uploadFileList[keys[i]]
-                html += `<tr><td>${fileItem.name}</td><td>${fileItem.size}</td><td><div class="progress mb-3">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                     </div></td></tr>`
+                let key = keys[i]
+                let file = fileList[key];
+                fileTable.append(`
+                <div class="row border-bottom ml-0 mr-0 position-relative text-secondary">
+                <div id="progress-${key}" class="position-absolute h-100 ${file.fail ? 'bg-danger' : 'bg-success'}" style="opacity: .1;width: ${file.finish + '%'}"></div>
+                <div class="col-md-6 p-3">${file.name}</div>
+                <div class="col-md-3 p-3">${sizeTransform(file.size)}</div>
+                <div id="number-${key}" class="col-md-3 p-3">${file.finish === 0 ? '<a href="javascript:void(0)" class="upload-item-file" data-file="' + key + '">等待上传</a>' : file.finish + "%"}</div>
+            </div>`);
             }
-            $("#file-list-table").html("")
-            $("tbody#file-list-table").html(html)
         }
 
-        $("#upload-files").on('change', function () {
-            for (let i = 0; i < this.files.length; i++) {
-                let file = this.files[i];
-                if (file.name === ".DS_Store") {
-                    continue
-                }
-                let uploadItem = {
-                    name: file.webkitRelativePath ? file.webkitRelativePath : file.name,
-                    size: convertSize(file.size),
-                    files: [file]
-                }
-                uploadFileList[uploadItem.name] = uploadItem;
-            }
-            console.log(uploadFileList);
-            updateList()
-        })
-
-        $("#upload-dir").on('change', function () {
-            if (this.files.length > 0) {
-                let uploadItem = {
-                    name: this.files[0].webkitRelativePath.substring(0, this.files[0].webkitRelativePath.indexOf("/")),
-                    files: [],
-                    size: ''
-                }
-                let size = 0;
-                for (let i = 0; i < this.files.length; i++) {
-
-                    let file = this.files[i];
-                    if (file.name === ".DS_Store") {
-                        continue
+        function doUpload(key, keys) {
+            if (fileList[key].finish === 0) {
+                let xhr = new XMLHttpRequest();
+                let fd = new FormData();
+                fd.append(csrf.attr("name"), csrf.val())
+                fd.append('path', $("#upload-path").val())
+                fd.append("file", fileList[key]);
+                xhr.open("POST", "/cloud/upload", true);// 上传目标
+                xhr.upload.addEventListener("progress", function (evt) {
+                    uploadProgress(evt, key)
+                }, false);
+                xhr.send(fd);
+                xhr.onloadend = function () {
+                    let res = JSON.parse(xhr.responseText)
+                    if (!res.success) {
+                        fileList[key]['fail'] = true;
+                        $(`#progress-${key}`).removeClass("bg-success").addClass("bg-danger")
                     }
-                    uploadItem.files.push(file)
-                    size += file.size
+                    fileList[key].finish = 100;
+                    let finish = true;
+                    let fail = 0;
+                    for (let i = 0; i < keys.length; i++) {
+                        console.log(fileList[keys[i]]);
+                        if (fileList[keys[i]].fail) {
+                            fail++;
+                        }
+                        if (fileList[keys[i]].finish < 100) {
+                            finish = false;
+                            break;
+                        }
+                    }
+                    console.log(fail);
+                    if (finish) {
+                        if (fail > 0) {
+                            $("#msg-box").html(`<div class="alert text-white bg-danger" role="alert"><div class="iq-alert-text">共<b>${keys.length}</b>个文件上传完成,有<b>${fail}</b>个失败 </div><button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                           <i class="ri-close-line"></i>
+                           </button></div>`)
+                        } else {
+                            $("#msg-box").html(`<div class="alert text-white bg-success" role="alert"><div class="iq-alert-text">共<b>${keys.length}</b>个文件上传完成 </div><button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                           <i class="ri-close-line"></i>
+                           </button></div>`)
+                        }
+                    }
                 }
-                uploadItem.size = convertSize(size)
-                uploadFileList[uploadItem.name] = uploadItem;
             }
-            console.log(uploadFileList);
-            updateList()
+        }
+
+        function uploadProgress(evt, key) {
+            if (evt.lengthComputable) {
+                let percentComplete = Math.round((evt.loaded) * 100 / evt.total);
+                $(`#progress-${key}`).width(percentComplete + "%");
+                $(`#number-${key}`).html(percentComplete + "%")
+                fileList[key].finish = percentComplete;
+            }
+        }
+
+        $(".file-btn").on('click', function () {
+            location.href = $(this).data('url')
         })
     })
 </script>

@@ -99,6 +99,9 @@ public enum FileType {
     FILE_TYPE_XLSX(77, "xlsx", "application/x-xls", "/static/images/filetype/xlsx.png"),
     FILE_TYPE_XML(78, "xml", "text/txt", "/static/images/filetype/xml.png"),
     FILE_TYPE_ZIP(79, "zip", "multipart/form-data", "/static/images/filetype/zip.png"),
+    FILE_TYPE_DMG(80, "dmg", "multipart/form-data", "/static/images/filetype/dmg.png"),
+    FILE_TYPE_TAR(81, "tar", "multipart/form-data", "/static/images/filetype/tar.png"),
+    FILE_TYPE_GZ(82, "gz", "multipart/form-data", "/static/images/filetype/gz.png"),
     ;
     private final int value;
     private final String desc;

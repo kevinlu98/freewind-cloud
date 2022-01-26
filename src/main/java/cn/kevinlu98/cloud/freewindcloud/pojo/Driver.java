@@ -24,6 +24,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "fwc_driver")
 public class Driver {
+
+    public static final int DRIVER_ACTIVE = 1;
+    public static final int DRIVER_DEACTIVE = 2;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

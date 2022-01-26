@@ -86,9 +86,9 @@ public class LocalService extends CloudService {
         File file = new File(filename);
         FileInputStream in = new FileInputStream(file);
         response.setContentType(FileType.typeByFile(file).getContentType());
-        response.addHeader("Cache-Control","no-cache, no-store, must-revalidate");
         response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.addHeader("Content-Disposition", String.format("filename=\"%s\"", URLEncoder.encode(file.getName(),"UTF-8")));
+        response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.addHeader("Content-Disposition", String.format("filename=\"%s\"", URLEncoder.encode(file.getName(), "UTF-8")));
         response.addHeader("Pragma", "no-cache");
         response.addHeader("Expires", "0");
         ServletOutputStream out = response.getOutputStream();
@@ -114,9 +114,9 @@ public class LocalService extends CloudService {
         String filename = driver.getPath() + File.separator + loginUser.getUsername() + File.separator + path;
         File file = new File(filename);
         FileInputStream in = new FileInputStream(file);
-        response.addHeader("Cache-Control","no-cache, no-store, must-revalidate");
         response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.addHeader("Content-Disposition", String.format("attachment;filename=\"%s\"", URLEncoder.encode(file.getName(),"UTF-8")));
+        response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.addHeader("Content-Disposition", String.format("attachment;filename=\"%s\"", URLEncoder.encode(file.getName(), "UTF-8")));
         ServletOutputStream out = response.getOutputStream();
         int len;
         byte[] buffer = new byte[1024 * 10];
@@ -132,6 +132,15 @@ public class LocalService extends CloudService {
             log.error("responseFileStream stream close() error:NullPointerException" + e.toString());
         } catch (Exception e) {
             log.error("responseFileStream stream close() error:" + e.toString());
+        }
+    }
+
+    @Override
+    public void mkdir(Driver driver, String name, String path, User loginUser) {
+        String filename = driver.getPath() + File.separator + loginUser.getUsername() + File.separator + path + File.separator + name;
+        File targetFile = new File(filename);
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
         }
     }
 

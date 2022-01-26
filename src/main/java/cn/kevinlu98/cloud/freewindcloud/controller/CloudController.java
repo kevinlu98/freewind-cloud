@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Author: Mr丶冷文
@@ -61,7 +62,7 @@ public class CloudController {
             Driver driver = driverService.activeDriver();
             CloudService cloudService = CloudService.getInstance(DriverType.find(driver.getType()));
             path = DesUtils.decrypt(path);
-            cloudService.fileStream(driver, website.loginUser(), path,response);
+            cloudService.fileStream(driver, website.loginUser(), path, response);
         }
     }
 
@@ -71,7 +72,7 @@ public class CloudController {
             Driver driver = driverService.activeDriver();
             CloudService cloudService = CloudService.getInstance(DriverType.find(driver.getType()));
             path = DesUtils.decrypt(path);
-            cloudService.download(driver, website.loginUser(), path,response);
+            cloudService.download(driver, website.loginUser(), path, response);
         }
     }
 
@@ -96,10 +97,22 @@ public class CloudController {
         return FWResult.success("设置成功");
     }
 
+    @GetMapping("/mkdir")
+    @ResponseBody
+    public FWResult<String> mkdir(String name, String path) throws Exception {
+        if (StringUtils.isNotEmpty(path)) {
+            path = DesUtils.decrypt(path);
+        }
+        Driver driver = driverService.activeDriver();
+        CloudService cloudService = CloudService.getInstance(DriverType.find(driver.getType()));
+        cloudService.mkdir(driver, name, path, website.loginUser());
+        return FWResult.success("创建成功");
+    }
+
     @ResponseBody
     @PostMapping("/upload")
-    public FWResult<String> upload(@RequestParam("file") MultipartFile file, String path) throws Exception {
-        if (file.isEmpty()) {
+    public FWResult<String> upload(MultipartFile file, String path) throws Exception {
+        if (Objects.isNull(file) || file.isEmpty()) {
             return FWResult.fail("文件上传失败，请选择文件");
         }
         if (StringUtils.isNotEmpty(path)) {

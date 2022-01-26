@@ -35,7 +35,7 @@ public class DriverService {
     }
 
     public Driver activeDriver() {
-        return driverMapper.findByIsDefalut(1);
+        return driverMapper.findByIsDefalut(Driver.DRIVER_ACTIVE);
     }
 
     public void save(Driver driver) {
@@ -49,16 +49,26 @@ public class DriverService {
         if (driver.getId() == null) {
             driverMapper.save(driver);
         }
-        if (CollectionUtils.isEmpty(driverMapper.findAllByIsDefalut(1))) {
-            driver.setIsDefalut(1);
+        if (CollectionUtils.isEmpty(driverMapper.findAllByIsDefalut(Driver.DRIVER_ACTIVE))) {
+            driver.setIsDefalut(Driver.DRIVER_ACTIVE);
         } else {
-            driver.setIsDefalut(2);
+            driver.setIsDefalut(Driver.DRIVER_DEACTIVE);
         }
         Optional<Driver> driverOpt = driverMapper.findById(driver.getId());
         if (driverOpt.isPresent()) {
             Driver driverDb = driverOpt.get();
             PojoUtils.beanCopyWithIngore(driver, driverDb);
             driverMapper.save(driverDb);
+        }
+    }
+
+    public void active(Integer id) {
+        Optional<Driver> driverOpt = driverMapper.findById(id);
+        if (driverOpt.isPresent()) {
+            driverMapper.findAll().stream().peek(x -> x.setIsDefalut(Driver.DRIVER_DEACTIVE)).forEach(driverMapper::save);
+            Driver driver = driverOpt.get();
+            driver.setIsDefalut(1);
+            driverMapper.save(driver);
         }
     }
 }

@@ -7,10 +7,7 @@ import cn.kevinlu98.cloud.freewindcloud.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
@@ -46,10 +43,16 @@ public class DriverController {
         return "driver/add";
     }
 
+    @GetMapping("/active/{id}/{active}")
+    public String active(@PathVariable("id") Integer id, @PathVariable("active") Integer active) {
+        driverService.active(id);
+        return RedirectUtils.redirectSuccess("/driver/", "保存成功");
+    }
+
     @PostMapping("/add")
     public String addDriver(Driver driver) {
         if (driverService.exist(driver))
-            return RedirectUtils.redirectError("/driver/add","当前类型已经存在该路径或该名称的云盘啦");
+            return RedirectUtils.redirectError("/driver/add", "当前类型已经存在该路径或该名称的云盘啦");
         driverService.save(driver);
         return RedirectUtils.redirectSuccess("/driver/", "保存成功");
     }

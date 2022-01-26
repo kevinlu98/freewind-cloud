@@ -44,4 +44,6 @@ public abstract class CloudService {
     public abstract void fileStream(Driver driver, User loginUser, String path, HttpServletResponse outputStream) throws IOException;
 
     public abstract void download(Driver driver, User loginUser, String path, HttpServletResponse response) throws IOException;
+
+    public abstract void mkdir(Driver driver, String name, String path, User loginUser);
 }
